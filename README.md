@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# stackoverflow inspired project
 
-## Getting Started
+Following JSmastery course
 
-First, run the development server:
+## clert authentication
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## shadcn UI
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Gotcha:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> tailwind.config.ts will be overridden.
+> now sure if it works out of box when "src" dir is activated
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Next.js features that's new to me
 
-## Learn More
+### usePathname
 
-To learn more about Next.js, take a look at the following resources:
+## tailwind and CSS
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+[https://tailwindcss.com/docs/responsive-design](https://tailwindcss.com/docs/responsive-design)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+`max-sm` means `@media not all and (min-width: 640px) {...`
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+the "not" negate all the stuff after it, so it means **"not (all and (min-width:640px))"**, effectively means **for screens smaller than 640px**
+The CSS syntax is mind-bending, why not using `@media all and (max-width:640px)` instead?
+Anyway, hopefully the `max-sm` is straight-forward name.
