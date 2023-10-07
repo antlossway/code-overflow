@@ -28,6 +28,7 @@ const NavContent = () => {
         return (
           <SheetClose asChild key={item.route}>
             <Link
+              key={item.route}
               href={item.route}
               className={`${
                 isActive

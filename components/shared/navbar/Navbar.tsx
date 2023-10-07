@@ -21,8 +21,12 @@ const Navbar = () => {
         </p>
       </Link>
       <GlobalSearch />
+
       <div className="flex-between gap-5">
+        {/* darkmode toggle button */}
         <Theme />
+
+        {/* only display when user signed in */}
         <SignedIn>
           <UserButton
             afterSignOutUrl="/"
@@ -36,7 +40,8 @@ const Navbar = () => {
             }}
           />
         </SignedIn>
-        {/* Todo Mobile Nav */}
+
+        {/* hamberger menu */}
         <MobileNav />
       </div>
     </nav>
