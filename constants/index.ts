@@ -74,42 +74,42 @@ export const BADGE_CRITERIA = {
 
 export const rightSideBarList = [
   {
-    _id: 1,
+    _id: "1",
     title:
       "Would it be appropriate to point out an error in another paper during a referee report?",
   },
-  { _id: 2, title: "How can an airconditioning machine exist?" },
+  { _id: "2", title: "How can an airconditioning machine exist?" },
 
-  { _id: 3, title: "How to make a good diagram of a lattice?" },
+  { _id: "3", title: "How to make a good diagram of a lattice?" },
 
-  { _id: 4, title: "Interrogated every time crossing UK Border as citizen" },
+  { _id: "4", title: "Interrogated every time crossing UK Border as citizen" },
 
   {
-    _id: 5,
+    _id: "5",
     title: "What is an example of 3 numbers that do not make up a vector?",
   },
 ];
 
 export const rightSideBarTags = [
-  { _id: 1, name: "javascript", count: 20152 },
+  { _id: "1", name: "javascript", count: 20152 },
   {
-    _id: 2,
+    _id: "2",
     name: "next.js",
     count: 18493,
   },
   {
-    _id: 3,
+    _id: "3",
     name: "react.js",
     count: 16269,
   },
-  { _id: 4, name: "node.js", count: 15121 },
+  { _id: "4", name: "node.js", count: 15121 },
   {
-    _id: 5,
+    _id: "5",
     name: "python",
     count: 14431,
   },
   {
-    _id: 6,
+    _id: "6",
     name: "postgresql",
     count: 9429,
   },
