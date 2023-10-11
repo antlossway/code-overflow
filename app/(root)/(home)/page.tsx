@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/context/filters";
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { getQuestions } from "@/lib/actions/question.action";
+import { IQuestion } from "@/lib/database/question.model";
 
 const filterOptions = [
   {
@@ -27,72 +29,10 @@ const filterOptions = [
   },
 ];
 
-const questions = [
-  {
-    _id: 1,
-    title: "How to use the new feature?",
-    tags: [
-      { _id: "1", name: "react.js" },
-      { _id: "2", name: "redux" },
-    ],
-    author: {
-      _id: 1,
-      name: "John Doe",
-      picture: "url_to_picture",
-    },
-    upvotes: 100_000_000,
-    views: 200_000_123,
-    answers: [
-      {
-        /* Specify the structure of an answer object */
-      },
-    ],
-    createdAt: new Date("2023-09-01T00:00:00.000Z"),
-  },
-  {
-    _id: 2,
-    title: "How to use the new feature? we need to be able to use it",
-    tags: [
-      { _id: "1", name: "react.js" },
-      { _id: "2", name: "redux" },
-    ],
-    author: {
-      _id: 1,
-      name: "John Doe",
-      picture: "url_to_picture",
-    },
-    upvotes: 10,
-    views: 200,
-    answers: [
-      {
-        /* Specify the structure of an answer object */
-      },
-    ],
-    createdAt: new Date("2021-09-01T00:00:00.000Z"),
-  },
-  {
-    _id: 3,
-    title: "How to use the new feature?",
-    tags: [
-      { _id: "1", name: "react.js" },
-      { _id: "2", name: "redux" },
-    ],
-    author: {
-      _id: 1,
-      name: "John Doe",
-      picture: "url_to_picture",
-    },
-    upvotes: 10,
-    views: 200,
-    answers: [
-      {
-        /* Specify the structure of an answer object */
-      },
-    ],
-    createdAt: new Date("2021-09-01T00:00:00.000Z"),
-  },
-];
-export default function Home() {
+export default async function Home() {
+  const result = await getQuestions({});
+  console.log("debug getQuestions ", result);
+
   return (
     <>
       {/* heading with a button */}
@@ -127,8 +67,8 @@ export default function Home() {
 
       {/* Questions */}
       <div className="mt-11 w-full flex flex-col gap-5 ">
-        {questions.length > 0 ? (
-          questions.map((question) => (
+        {result.questions.length > 0 ? (
+          result?.questions.map((question) => (
             <QuestionCard key={question.title} question={question} />
           ))
         ) : (
