@@ -29,7 +29,6 @@ import Link from "next/link";
 
 export default async function Home() {
   const result = (await getQuestions({})) || { questions: [] };
-  console.log("debug getQuestions ", result);
 
   return (
     <>
