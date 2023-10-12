@@ -10,14 +10,14 @@ import { revalidatePath } from "next/cache";
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
-    //connect to DB
+    // connect to DB
     connectToDatabase(); // no need await here
-    //get all questions
+    // get all questions
     const questions = await Question.find({})
       .populate({ path: "tags", model: Tag }) // for those referenced fields, populate them so that we can see the details
       .populate({ path: "author", model: User })
       .sort({ createdAt: -1 }); // sort by createdAt in descending order);
-    //return response
+    // return response
     return { questions };
   } catch (error) {
     console.log(error);
@@ -26,12 +26,12 @@ export async function getQuestions(params: GetQuestionsParams) {
 
 export async function createQuestion(params: CreateQuestionParams) {
   try {
-    //connect to DB
+    // connect to DB
     await connectToDatabase();
 
     const { title, explanation, tags, author, path } = params;
-    //validate data
-    //save to DB, first insert a question
+    // validate data
+    // save to DB, first insert a question
     const question = await Question.create({
       title,
       explanation,
@@ -65,7 +65,7 @@ export async function createQuestion(params: CreateQuestionParams) {
 
     await question.save();
     console.log("new question saved to DB");
-    //reload the home page to show the newly created question
+    // reload the home page to show the newly created question
     revalidatePath(path);
   } catch (error) {
     console.log(error);

@@ -1,5 +1,4 @@
 "use client";
-import Home from "@/app/(root)/(home)/page";
 import React from "react";
 import { Button } from "../ui/button";
 import { HomePageFilters } from "@/context/filters";

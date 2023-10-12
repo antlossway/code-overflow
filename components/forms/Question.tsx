@@ -21,11 +21,9 @@ import { Input } from "@/components/ui/input";
 import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
-import { Saira_Extra_Condensed } from "next/font/google";
 import { createQuestion } from "@/lib/actions/question.action";
-import { useUser } from "@clerk/nextjs";
+// import { useUser } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
-import path from "path";
 
 // const QuestionsSchema = z.object({
 //   username: z.string().min(2, {
@@ -40,7 +38,7 @@ const Question = ({ mongoUserId }: { mongoUserId: string }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { user } = useUser();
+  // const { user } = useUser();
 
   // 1. Define a form.
   const form = useForm<z.infer<typeof QuestionsSchema>>({
@@ -186,7 +184,7 @@ const Question = ({ mongoUserId }: { mongoUserId: string }) => {
                               message: "Tag must be less than 15 characters.",
                             });
                           }
-                          //check if tag already exists
+                          //  check if tag already exists
                           if (!field.value.includes(tagValue as never)) {
                             form.setValue("tags", [...field.value, tagValue]);
                             // @ts-ignore

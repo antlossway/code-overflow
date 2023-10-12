@@ -5,38 +5,36 @@ import LocalSearch from "@/components/shared/search/LocalSearch";
 import NoResult from "@/components/shared/search/NoResult";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/context/filters";
-import { UserButton } from "@clerk/nextjs";
-import Link from "next/link";
 import { getQuestions } from "@/lib/actions/question.action";
-import { IQuestion } from "@/lib/database/question.model";
+import Link from "next/link";
 
-const filterOptions = [
-  {
-    _id: 1,
-    value: "newest",
-  },
-  {
-    _id: 2,
-    value: "recommended",
-  },
-  {
-    _id: 3,
-    value: "frequent",
-  },
-  {
-    _id: 4,
-    value: "unanswered",
-  },
-];
+// const filterOptions = [
+//   {
+//     _id: 1,
+//     value: "newest",
+//   },
+//   {
+//     _id: 2,
+//     value: "recommended",
+//   },
+//   {
+//     _id: 3,
+//     value: "frequent",
+//   },
+//   {
+//     _id: 4,
+//     value: "unanswered",
+//   },
+// ];
 
 export default async function Home() {
-  const result = await getQuestions({});
+  const result = (await getQuestions({})) || { questions: [] };
   console.log("debug getQuestions ", result);
 
   return (
     <>
       {/* heading with a button */}
-      <div className="flex flex-col-reverse justify-between gap-4 w-full sm:flex-row sm:items-center background-light850_dark100">
+      <div className="background-light850_dark100 flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="h1-bold text-dark100_light900">All questions</h1>
         <Link href="/ask-question" className="flex justify-end max-sm:w-full">
           <Button className="primary-gradient min-h-[46px] px-4 py-3 text-light-900">
@@ -66,10 +64,20 @@ export default async function Home() {
       <HomeFilters />
 
       {/* Questions */}
-      <div className="mt-11 w-full flex flex-col gap-5 ">
+      <div className="mt-11 flex w-full flex-col gap-5 ">
         {result.questions.length > 0 ? (
-          result?.questions.map((question) => (
-            <QuestionCard key={question.title} question={question} />
+          result.questions.map((question) => (
+            <QuestionCard
+              key={question._id}
+              _id={question._id}
+              title={question.title}
+              tags={question.tags}
+              author={question.author}
+              upvotes={question.upvotes}
+              views={question.views}
+              answers={question.answers}
+              createdAt={question.createdAt}
+            />
           ))
         ) : (
           <NoResult
