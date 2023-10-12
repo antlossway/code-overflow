@@ -158,6 +158,15 @@ export const QuestionsSchema = z.object({
 });
 ```
 
+### use ! to avoid error
+
+username type is "string | null",
+error: "Type 'string | null' is not assignable to type 'string'."
+
+```
+username: username!, // ! means we are sure that this is not null
+```
+
 ### use @ts-ignore
 
 ```

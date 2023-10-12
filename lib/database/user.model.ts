@@ -6,7 +6,7 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password?: string; // social login does not need password
-  avatar?: string;
+  picture?: string;
   portfolioWebsite?: string;
   location?: string;
   bio?: string;
@@ -21,7 +21,7 @@ const UserSchema = new Schema<IUser>({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String },
-  avatar: { type: String },
+  picture: { type: String },
   portfolioWebsite: { type: String },
   location: { type: String },
   bio: { type: String },
