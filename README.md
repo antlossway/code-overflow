@@ -56,6 +56,37 @@ used to add an element to an array field within a document
 
 ## clert authentication
 
+### webhook to sync user with mongoDB
+
+1. deploy project to vercel and get the URL
+2. add clerk webhook endpoint, get WEBHOOK_SECRET
+3. add in .env.local NEXT_CLERK_WEBHOOK_SECRET=xxxxx, also update /api/webhook/route.ts to read from this variable
+
+```
+const WEBHOOK_SECRET = process.env.NEXT_CLERK_WEBHOOK_SECRET;
+```
+
+4. update /middleware.ts
+   add publicRoutes and ignoredRoutes, this is to authorize clerk webhook to call action, and also allow other functions in app.
+
+```
+export default authMiddleware({
+  publicRoutes: [
+    "/",
+    "/api/webhook",
+    "question/:id",
+    "/tags",
+    "/tags/:id",
+    "/profile/:id",
+    "/community",
+    "/jobs",
+  ],
+  ignoredRoutes: ["/api/webhook", "/api/chatgpt"],
+});
+```
+
+5. vercel project setting: add environment variable `NEXT_CLERK_WEBHOOK_SECRET`, redeploy
+
 ## shadcn UI
 
 Gotcha:

@@ -1,4 +1,3 @@
-import { Webhook } from "svix";
 import { authMiddleware } from "@clerk/nextjs";
 
 // This example protects all routes including api/trpc routes
