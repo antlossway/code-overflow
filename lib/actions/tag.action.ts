@@ -1,8 +1,29 @@
 "use server";
 
+import Tag from "../database/tag.model";
 import User from "../database/user.model";
 import { connectToDatabase } from "../mongoose";
-import { GetTopInteractedTagsParams } from "./shared.types";
+import { GetAllTagsParams, GetTopInteractedTagsParams } from "./shared.types";
+
+export async function getAllTags(params: GetAllTagsParams) {
+  try {
+    connectToDatabase();
+
+    // const { filter } = params;
+
+    // const tags = [
+    // { _id: "1", name: "css" },
+    // { _id: "2", name: "javascript" },
+    // { _id: "3", name: "nodejs" },
+    // ];
+    const tags = await Tag.find({});
+
+    return { tags };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
