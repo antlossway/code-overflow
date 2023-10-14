@@ -5,12 +5,28 @@ import User from "../database/user.model";
 import {
   CreateUserParams,
   DeleteUserParams,
+  GetAllUsersParams,
   UpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "../database/question.model";
 import console from "console";
 
+export async function getAllUsers(params: GetAllUsersParams) {
+  try {
+    connectToDatabase();
+
+    // const { page = 1, pageSize = 20, filter, searchQuery } = params;
+
+    // newly created user will be on top
+    const users = await User.find({}).sort({ createdAt: -1 });
+
+    return { users };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 export async function getUserById(params: any) {
   try {
     connectToDatabase();

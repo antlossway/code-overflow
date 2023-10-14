@@ -29,7 +29,7 @@ import Link from "next/link";
 
 export default async function Home() {
   const result = (await getQuestions({})) || { questions: [] };
-
+  console.log("debug home getQuestions: ", result);
   return (
     <>
       {/* heading with a button */}

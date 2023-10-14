@@ -28,15 +28,11 @@ const Metric = ({
         width={16}
         height={16}
         alt={alt}
-        className={`object-contain ${href ? "rounded-full" : ""}`}
+        className={` object-contain ${href ? "rounded-full" : ""} `}
       />
-      <p className={`${textStyles} flex item-center gap-1`}>
+      <p className={`${textStyles} flex items-center gap-1 `}>
         {value}
-        <span
-          className={`small-regular line-clamp-1 ${
-            isAuthor ? "max-sm:hidden" : ""
-          }`}
-        >
+        <span className={`small-regular ${isAuthor ? "max-sm:hidden" : ""}`}>
           {title}
         </span>
       </p>
@@ -51,7 +47,9 @@ const Metric = ({
     );
   }
 
-  return <div className="flex-center flex-wrap gap-1">{metricContent}</div>;
+  return (
+    <div className="flex items-center flex-wrap gap-1">{metricContent}</div>
+  );
 };
 
 export default Metric;
