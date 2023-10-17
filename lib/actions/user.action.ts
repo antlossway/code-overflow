@@ -1,13 +1,16 @@
 "use server";
 
-import { connectToDatabase } from "../mongoose";
-import User from "../database/user.model";
 import {
+  GetSavedQuestionsParams,
   CreateUserParams,
   DeleteUserParams,
   GetAllUsersParams,
+  ToggleSaveQuestionParams,
   UpdateUserParams,
-} from "./shared.types";
+} from "./shared.types.d";
+
+import { connectToDatabase } from "../mongoose";
+import User from "../database/user.model";
 import { revalidatePath } from "next/cache";
 import Question from "../database/question.model";
 import console from "console";
@@ -33,7 +36,7 @@ export async function getUserById(params: any) {
 
     const { userId } = params;
 
-    const user = await User.findOne({ clertId: userId });
+    const user = await User.findOne({ clerkId: userId });
 
     return user;
   } catch (error) {
@@ -99,4 +102,48 @@ export async function deleteUser(params: DeleteUserParams) {
     console.log(error);
     throw error;
   }
+}
+
+export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId, userId, path } = params;
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const isQuestionSaved = user.savedPosts.includes(questionId);
+    if (isQuestionSaved) {
+      // remove question
+      await User.findByIdAndUpdate(
+        userId,
+        { $pull: { savedPosts: questionId } },
+        { new: true }
+      );
+    } else {
+      await User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { savedPosts: questionId } },
+        { new: true }
+      );
+    }
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getSavedQuestions(params: GetSavedQuestionsParams) {
+  try {
+    const { clerkId } = params;
+    connectToDatabase();
+    const user = await User.findOne({ clerkId }).populate("savedPosts");
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return { questions: user.savedPosts };
+  } catch (error) {}
 }

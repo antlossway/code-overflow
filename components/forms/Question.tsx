@@ -24,6 +24,7 @@ import Image from "next/image";
 import { createQuestion } from "@/lib/actions/question.action";
 // import { useUser } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
+import { useTheme } from "@/context/ThemeProvider";
 
 // const QuestionsSchema = z.object({
 //   username: z.string().min(2, {
@@ -33,6 +34,7 @@ import { useRouter, usePathname } from "next/navigation";
 const formType: any = "create"; // or 'edit', make the form reusable
 
 const Question = ({ mongoUserId }: { mongoUserId: string }) => {
+  const { mode } = useTheme();
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -147,13 +149,12 @@ const Question = ({ mongoUserId }: { mongoUserId: string }) => {
                       "codesample | bold italic backcolor | alignleft aligncenter | " +
                       "alignright alignjustify | bullist numlist ",
                     content_style: "body { font-family:Inter; font-size:16px }",
+                    skin: mode === "dark" ? "oxide-dark" : "oxide",
+                    content_css: mode === "dark" ? "dark" : "light",
                   }}
                 />
               </FormControl>
-              <FormDescription className="body-regular mt-2.5 text-light-500">
-                Introduce the problem and expand on what you put in the title.
-                Min 20 characters.
-              </FormDescription>
+
               {/* for error message */}
               <FormMessage className="text-red-500" />
             </FormItem>

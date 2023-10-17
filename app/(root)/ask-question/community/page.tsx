@@ -8,6 +8,42 @@ import UserCard from "@/components/cards/UserCard";
 import Link from "next/link";
 import { getAllUsers } from "@/lib/actions/user.action";
 
+// some fake data
+// const users = [
+//   {
+//     _id: "1",
+//     name: "John Doe",
+//     username: "johndoe",
+//     tags: [
+//       { _id: "1", name: "react" },
+//       { _id: "2", name: "javascript" },
+//       { _id: "3", name: "nodejs" },
+//     ],
+//     picture: "/assets/icons/account.svg",
+//   },
+//   {
+//     _id: "2",
+//     name: "John Doe",
+//     username: "johndoe",
+//     tags: [],
+//     picture: "/assets/icons/account.svg",
+//   },
+//   {
+//     _id: "3",
+//     name: "John Doe",
+//     username: "johndoe",
+//     tags: [],
+//     picture: "/assets/icons/account.svg",
+//   },
+//   {
+//     _id: "4",
+//     name: "John Doe",
+//     usrname: "johndoe",
+//     tags: [],
+//     picture: "/assets/icons/account.svg",
+//   },
+// ];
+
 const CommunityPage = async () => {
   const result = (await getAllUsers({})) || { users: [] };
   console.log("debug community getUsers: ", result.users);
