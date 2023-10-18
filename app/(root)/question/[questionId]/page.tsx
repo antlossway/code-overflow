@@ -91,7 +91,9 @@ const QuestionDetail = async ({ params }: QuestionParams) => {
       </div>
 
       {/* question detail, using prismjs to highlight the code block, use html-react-parser for other markdown text */}
-      <ParseHTML data={result.explanation} />
+      <div className="text-dark200_light800">
+        <ParseHTML data={result.explanation} />
+      </div>
 
       {/* tags */}
       <div className="mt-8 flex flex-wrap gap-2">

@@ -2,13 +2,12 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import Filter from "@/components/shared/Filter";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import NoResult from "@/components/shared/search/NoResult";
-import { HomePageFilters } from "@/context/filters";
+import { QuestionFilters } from "@/context/filters";
 import { getSavedQuestions } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 export default async function CollectionPage() {
   const { userId: clerkId } = auth();
-  if (!clerkId) redirect("/sign-in");
+  if (!clerkId) return null;
 
   const result = (await getSavedQuestions({ clerkId })) || { questions: [] };
   console.log("debug getSavedQuestions: ", result.questions);
@@ -30,9 +29,8 @@ export default async function CollectionPage() {
         />
         {/* Filters, in smaller screen, it's a selection appear on the right side of question search */}
         <Filter
-          filters={HomePageFilters}
+          filters={QuestionFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
-          containerClasses="hidden max-md:flex"
         />
       </div>
 
@@ -54,7 +52,7 @@ export default async function CollectionPage() {
           ))
         ) : (
           <NoResult
-            title="No questions found"
+            title="No saved questions found"
             desc="Be the first to break the silence! 🚀 Ask a Question and kickstart the discussion. our query could be the next big thing others learn from. Get involved! 💡"
             link="/ask-question"
             linkTitle="Ask a Question"

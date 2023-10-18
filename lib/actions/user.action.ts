@@ -1,4 +1,5 @@
 "use server";
+import { FilterQuery } from "mongoose";
 
 import {
   GetSavedQuestionsParams,
@@ -14,6 +15,7 @@ import User from "../database/user.model";
 import { revalidatePath } from "next/cache";
 import Question from "../database/question.model";
 import console from "console";
+import Tag from "../database/tag.model";
 
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
@@ -138,9 +140,27 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
 
 export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
-    const { clerkId } = params;
+    const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
     connectToDatabase();
-    const user = await User.findOne({ clerkId }).populate("savedPosts");
+
+    const query: FilterQuery<typeof Question> = searchQuery
+      ? { title: { $regex: new RegExp(searchQuery, "i") } }
+      : {};
+
+    const user = await User.findOne({ clerkId }).populate({
+      path: "savedPosts",
+      match: query,
+      options: {
+        sort: { createdAt: -1 },
+        // paging
+      },
+      // second level populate on each question
+      populate: [
+        { path: "tags", model: Tag, select: "_id name" },
+        { path: "author", model: User, select: "_id clerkId name picture" },
+      ],
+    });
+
     if (!user) {
       throw new Error("User not found");
     }
