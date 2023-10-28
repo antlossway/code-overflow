@@ -1,13 +1,13 @@
-"use client";
-import React, { useRef, useState } from "react";
+"use client"
+import React, { useRef, useState } from "react"
 
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 
-import { Editor } from "@tinymce/tinymce-react";
+import { Editor } from "@tinymce/tinymce-react"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -16,29 +16,56 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { QuestionsSchema } from "@/lib/validations";
-import { Badge } from "../ui/badge";
-import Image from "next/image";
-import { createQuestion } from "@/lib/actions/question.action";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { QuestionsSchema } from "@/lib/validations"
+import { Badge } from "../ui/badge"
+import Image from "next/image"
+import { createQuestion, editQuestion } from "@/lib/actions/question.action"
 // import { useUser } from "@clerk/nextjs";
-import { useRouter, usePathname } from "next/navigation";
-import { useTheme } from "@/context/ThemeProvider";
+import { useRouter, usePathname } from "next/navigation"
+import { useTheme } from "@/context/ThemeProvider"
 
 // const QuestionsSchema = z.object({
 //   username: z.string().min(2, {
 //     message: "Username must be at least 2 characters.",
 //   }),
 // });
-const formType: any = "create"; // or 'edit', make the form reusable
+interface Props {
+  mongoUserId: string
+  type?: string
+  questionDetails?: string
+}
+const Question = ({ mongoUserId, type = "Create", questionDetails }: Props) => {
+  const { mode } = useTheme()
+  const editorRef = useRef(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const router = useRouter()
+  const pathname = usePathname()
 
-const Question = ({ mongoUserId }: { mongoUserId: string }) => {
-  const { mode } = useTheme();
-  const editorRef = useRef(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
+  const parsedQuestionDetails = questionDetails
+    ? JSON.parse(questionDetails)
+    : ""
+  const groupedTags = parsedQuestionDetails?.question?.tags?.map(
+    (tag: any) => tag.name
+  )
+
+  if (type === "Edit" && questionDetails) {
+    // check if author of the question is the same as the current user
+    // if not, redirect to home page
+    if (
+      JSON.parse(mongoUserId) !==
+      JSON.parse(questionDetails).question.author._id
+    ) {
+      // console.log(
+      //   "#### Question: not the same author, ",
+      //   mongoUserId,
+      //   " vs ",
+      //   JSON.parse(questionDetails).question.author._id
+      // );
+      router.push("/")
+    }
+  }
 
   // const { user } = useUser();
 
@@ -46,31 +73,47 @@ const Question = ({ mongoUserId }: { mongoUserId: string }) => {
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
-      title: "",
-      explanation: "",
-      tags: [],
+      title: parsedQuestionDetails?.question?.title || "",
+      explanation: parsedQuestionDetails?.question?.explanation || "",
+      tags: groupedTags || [],
     },
-  });
+  })
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    setIsSubmitting(true);
+    setIsSubmitting(true)
     try {
-      // create question, make an async call to our API
-      // contain all form data
-      await createQuestion({
-        ...values,
-        author: JSON.parse(mongoUserId),
-        path: pathname, // '/' home page
-      });
+      if (type === "Edit") {
+        // edit question
+        await editQuestion({
+          ...values,
+
+          path: pathname,
+          questionId: parsedQuestionDetails.question._id,
+        })
+
+        // console.log("edit question");
+        router.push(`/question/${parsedQuestionDetails.question._id}`)
+      } else {
+        // create question, make an async call to our API
+        // contain all form data
+        await createQuestion({
+          // ...values,
+          title: values.title,
+          explanation: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId),
+          path: pathname, // '/' home page
+        })
+        router.push("/")
+      }
 
       // navigate to home page
-      router.push("/");
     } catch (error) {
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
   }
 
@@ -123,7 +166,10 @@ const Question = ({ mongoUserId }: { mongoUserId: string }) => {
                   }
                   onBlur={field.onBlur} // save the value once we exit the editor
                   onEditorChange={(content) => field.onChange(content)}
-                  initialValue="<p>This is the initial content of the editor.</p>"
+                  // initialValue="<p>This is the initial content of the editor.</p>"
+                  initialValue={
+                    parsedQuestionDetails?.question?.explanation || ""
+                  }
                   init={{
                     height: 350,
                     menubar: false,
@@ -174,27 +220,27 @@ const Question = ({ mongoUserId }: { mongoUserId: string }) => {
                   <Input
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && field.name === "tags") {
-                        e.preventDefault();
+                        e.preventDefault()
                         // @ts-ignore
-                        const tagValue = e.target.value.trim();
+                        const tagValue = e.target.value.trim()
                         // max 3 tags
                         if (tagValue !== "" && field.value.length < 3) {
                           if (tagValue.length > 15) {
                             return form.setError("tags", {
                               type: "max",
                               message: "Tag must be less than 15 characters.",
-                            });
+                            })
                           }
                           //  check if tag already exists
                           if (!field.value.includes(tagValue as never)) {
-                            form.setValue("tags", [...field.value, tagValue]);
+                            form.setValue("tags", [...field.value, tagValue])
                             // @ts-ignore
-                            e.target.value = "";
-                            form.clearErrors("tags");
+                            e.target.value = ""
+                            form.clearErrors("tags")
                           }
                         } else {
                           // input is empty
-                          form.trigger();
+                          form.trigger()
                         }
                       }
                     }}
@@ -213,7 +259,7 @@ const Question = ({ mongoUserId }: { mongoUserId: string }) => {
                             form.setValue(
                               "tags",
                               field.value.filter((t: string) => t !== tag)
-                            );
+                            )
                           }}
                         >
                           {tag}
@@ -245,14 +291,14 @@ const Question = ({ mongoUserId }: { mongoUserId: string }) => {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <>{formType === "edit" ? "Editing..." : "Posting..."}</>
+            <>{type === "Edit" ? "Editing..." : "Posting..."}</>
           ) : (
-            <>{formType === "edit" ? "Edit Question" : "Ask a Question"}</>
+            <>{type === "Edit" ? "Edit Question" : "Ask a Question"}</>
           )}
         </Button>
       </form>
     </Form>
-  );
-};
+  )
+}
 
-export default Question;
+export default Question

@@ -20,7 +20,28 @@ module.exports = {
 
 ## mongo DB
 
-mongoose: mongodb object modeling for node.js
+### mongosh (MongoDB Shell)
+
+```
+brew install mongosh
+
+// filter questions belong to a author and select only the title field
+codeflow> db.questions.find({author: ObjectId("65288f20e1487081ce9ff8c3")},{title:1,_id:0})
+```
+
+### mongoose: mongodb object modeling for node.js
+
+**note** don't forget "use server" at the top of server action file, otherwise will get error like "TypeError: mongooseWEBPACK_IMPORTED_MODULE_0.models is undefined
+Source
+
+lib/database/question.model.ts (28:2) @ models
+
+26 |
+27 | const Question =
+28 | models.Question || model<IQuestion>("Question", QuestionSchema);
+| ^
+29 | export default Question;
+30 |"
 
 ```
 // server actions: answer.action.ts
@@ -37,7 +58,7 @@ mongoose: mongodb object modeling for node.js
     // .populate("author", "_id clerkId name picture")
 ```
 
-### $setOnInsert
+#### $setOnInsert
 
 when updating a document with `findOneAndUpdate`, use `$setOnInsert` to specify fields that should be set only when a new document is created (i.e., during an `upsert` operation)
 
@@ -56,7 +77,7 @@ when updating a document with `findOneAndUpdate`, use `$setOnInsert` to specify 
     }
 ```
 
-### $push
+#### $push
 
 used to add an element to an array field within a document
 
@@ -69,7 +90,7 @@ used to add an element to an array field within a document
     });
 ```
 
-### $addToSet vs. $push
+#### $addToSet vs. $push
 
 `$addToSet` do not add the item to the given field if it already contains it,
 on the other hand, `$push` will add the given object to field whether it exists or not.

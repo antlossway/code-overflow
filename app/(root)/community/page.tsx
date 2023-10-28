@@ -10,7 +10,7 @@ import { getAllUsers } from "@/lib/actions/user.action";
 
 const CommunityPage = async () => {
   const result = (await getAllUsers({})) || { users: [] };
-  console.log("debug community getUsers: ", result.users);
+  // console.log("debug community getUsers: ", result.users);
 
   return (
     <>

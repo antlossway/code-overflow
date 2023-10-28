@@ -4,15 +4,20 @@ import React from "react";
 
 import Image from "next/image";
 import Link from "next/link";
-import { SignedOut } from "@clerk/nextjs";
+import { SignedOut, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { sidebarLinks } from "@/constants";
 import { usePathname } from "next/navigation";
-const NavContent = () => {
+const NavContent = ({ clerkId }: { clerkId: string }) => {
   const pathname = usePathname();
+  const profileLink = `/profile/${clerkId}`;
+  console.log("debug profileLink: ", profileLink);
+
   return (
     <section className="flex flex-1 flex-col gap-6">
       {sidebarLinks.map((item) => {
+        if (item.route.includes("profile") && !clerkId) return null;
+
         const isActive =
           (pathname.includes(item.route) && item.route.length > 1) ||
           pathname === item.route;
@@ -20,7 +25,7 @@ const NavContent = () => {
         return (
           <Link
             key={item.route}
-            href={item.route}
+            href={item.route.includes("profile") ? profileLink : item.route}
             className={`${
               isActive
                 ? "primary-gradient rounded-lg text-light-900"
@@ -48,6 +53,7 @@ const NavContent = () => {
   );
 };
 const LeftSideBar = () => {
+  const { userId: clerkId } = useAuth();
   return (
     <aside className="sticky left-0 top-0 h-screen flex flex-col justify-between max-sm:hidden lg:w-[266px] overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none background-light900_dark200 light-border custom-scrollbar">
       {/* <Link href="/" className="flex items-center gap-1">
@@ -63,7 +69,7 @@ const LeftSideBar = () => {
       </Link> */}
 
       <div className="h-full flex flex-col  ">
-        <NavContent />
+        <NavContent clerkId={clerkId} />
 
         <SignedOut>
           <div className="flex flex-col gap-3">

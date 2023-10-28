@@ -3,26 +3,31 @@ import RenderTag from "../shared/RenderTag";
 import Link from "next/link";
 import Metric from "../shared/Metric";
 import { formatBigNumber, getTimesAgo } from "@/lib/utils";
+import { SignedIn } from "@clerk/nextjs";
+import EditDeleteAction from "../shared/EditDeleteAction";
 
 type QuestionCardProps = {
   _id: string;
   title: string;
-  tags: {
+  tags?: {
     _id: string;
     name: string;
   }[];
   author: {
-    _id: number;
+    _id: string;
+    clerkId: string;
     name: string;
     picture: string;
   };
   upvotes: Array<object>;
-  answers: Array<object>;
-  views: number;
+  answers?: Array<object>;
+  views?: number;
   createdAt: Date;
+  clerkId?: string | null;
 };
 const QuestionCard = ({
   _id,
+  clerkId,
   title,
   tags,
   author,
@@ -31,6 +36,10 @@ const QuestionCard = ({
   answers,
   createdAt,
 }: QuestionCardProps) => {
+  // console.log("debug clerkId vs author.clerkId: ", clerkId, author.clerkId);
+
+  console.log("debug QuestionCard _id: ", _id);
+
   return (
     <div className="card-wrapper rounded-lg p-6 sm:px-11 ">
       {/* createdAt and Title */}
@@ -47,11 +56,20 @@ const QuestionCard = ({
           </Link>
         </div>
         {/* TODO: if signed in, add edit/delete action */}
+        <SignedIn>
+          {clerkId && clerkId === author.clerkId && (
+            // <div className="w-full flex items-center justify-end gap-1">
+            //   <EditButton id={JSON.stringify(_id)} type="Question" />
+            //   <DeleteButton id={JSON.stringify(_id)} type="Question" />
+            // </div>
+            <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
+          )}
+        </SignedIn>
       </div>
 
       {/* tags */}
       <div className="mt-3.5 flex flex-wrap gap-2">
-        {tags.map((tag) => (
+        {tags?.map((tag) => (
           <RenderTag key={tag.name} _id={tag._id} name={tag.name} />
         ))}
       </div>
@@ -76,20 +94,25 @@ const QuestionCard = ({
           title=" Votes"
           textStyles="small-medium text-dark400_light800"
         />
-        <Metric
-          imgUrl="/assets/icons/message.svg"
-          alt="messages"
-          value={formatBigNumber(answers.length)}
-          title=" Answers"
-          textStyles="small-medium text-dark400_light800"
-        />
-        <Metric
-          imgUrl="/assets/icons/eye.svg"
-          alt="eye"
-          value={formatBigNumber(views)}
-          title=" Views"
-          textStyles="small-medium text-dark400_light800"
-        />
+        {answers && (
+          <Metric
+            imgUrl="/assets/icons/message.svg"
+            alt="messages"
+            value={formatBigNumber(answers.length)}
+            title=" Answers"
+            textStyles="small-medium text-dark400_light800"
+          />
+        )}
+
+        {views && (
+          <Metric
+            imgUrl="/assets/icons/eye.svg"
+            alt="eye"
+            value={formatBigNumber(views)}
+            title=" Views"
+            textStyles="small-medium text-dark400_light800"
+          />
+        )}
       </div>
     </div>
   );
