@@ -1,12 +1,12 @@
-import HomeFilters from "@/components/home/HomeFilters";
-import QuestionCard from "@/components/cards/QuestionCard";
-import Filter from "@/components/shared/Filter";
-import LocalSearch from "@/components/shared/search/LocalSearch";
-import NoResult from "@/components/shared/search/NoResult";
-import { Button } from "@/components/ui/button";
-import { HomePageFilters } from "@/context/filters";
-import { getQuestions } from "@/lib/actions/question.action";
-import Link from "next/link";
+import HomeFilters from "@/components/home/HomeFilters"
+import QuestionCard from "@/components/cards/QuestionCard"
+import Filter from "@/components/shared/Filter"
+import LocalSearch from "@/components/shared/search/LocalSearch"
+import NoResult from "@/components/shared/search/NoResult"
+import { Button } from "@/components/ui/button"
+import { HomePageFilters } from "@/context/filters"
+import { getQuestions } from "@/lib/actions/question.action"
+import Link from "next/link"
 
 // const filterOptions = [
 //   {
@@ -27,9 +27,9 @@ import Link from "next/link";
 //   },
 // ];
 
-export default async function Home() {
-  const result = (await getQuestions({})) || { questions: [] };
-  // console.log("debug home getQuestions: ", result);
+export default async function Home({ searchParams: { q } = { q: "" } }) {
+  const result = (await getQuestions({ searchQuery: q })) || { questions: [] }
+  // console.log("search params: ", q)
 
   return (
     <>
@@ -51,6 +51,7 @@ export default async function Home() {
           imgSrc="/assets/icons/search.svg"
           placeholder="Search questions..."
           otherClasses=""
+          path="/"
         />
         {/* Filters, in smaller screen, it's a selection appear on the right side of question search */}
         <Filter
@@ -89,5 +90,5 @@ export default async function Home() {
         )}
       </div>
     </>
-  );
+  )
 }

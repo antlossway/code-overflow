@@ -1,16 +1,18 @@
-"use client";
+"use client"
 
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import React from "react";
+import { Input } from "@/components/ui/input"
+import Image from "next/image"
+import React from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 type CustomInputProps = {
-  route: string;
-  iconPostion: string;
-  imgSrc: string;
-  placeholder: string;
-  otherClasses: string;
-};
+  route: string
+  iconPostion: string
+  imgSrc: string
+  placeholder: string
+  otherClasses: string
+  path: string
+}
 
 const LocalSearch = ({
   route,
@@ -18,9 +20,27 @@ const LocalSearch = ({
   imgSrc,
   placeholder,
   otherClasses,
+  path,
 }: CustomInputProps) => {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const search = e.currentTarget.search as HTMLInputElement
+    const newParams = new URLSearchParams(searchParams.toString())
+
+    if (search.value) {
+      newParams.set("q", search.value)
+    } else {
+      newParams.delete("q")
+    }
+
+    router.push(`${path}?${newParams.toString()}`)
+  }
+
   return (
-    <div className="relative w-full  ">
+    <div className="relative w-full ">
       <div
         className={`background-light800_darkgradient relative flex grow items-center gap-1 min-h-[56px] rounded-xl px-4 ${otherClasses}`}
       >
@@ -33,13 +53,18 @@ const LocalSearch = ({
             className="cursor-pointer"
           />
         )}
-        <Input
-          type="text"
-          placeholder={placeholder}
-          //   value=""
-          //   onChange={() => {}}
-          className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none text-dark400_light700 placeholder:!text-slate-600"
-        />
+        <form onSubmit={onSubmit}>
+          <Input
+            type="text"
+            name="search"
+            placeholder={placeholder}
+            //   value=""
+            //   onChange={() => {}}
+            autoComplete="off"
+            defaultValue={searchParams?.get("q") || ""}
+            className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none text-dark400_light700 placeholder:!text-slate-600"
+          />
+        </form>
 
         {iconPostion === "right" && (
           <Image
@@ -52,7 +77,7 @@ const LocalSearch = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LocalSearch;
+export default LocalSearch

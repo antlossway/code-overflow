@@ -1,13 +1,13 @@
-import Link from "next/link";
-import React from "react";
-import { Badge } from "@/components/ui/badge";
+import Link from "next/link"
+import React from "react"
+import { Badge } from "@/components/ui/badge"
 
 type Props = {
-  _id: string;
-  name: string;
-  count?: number;
-  showCount?: boolean;
-};
+  _id: string
+  name: string
+  count?: number
+  showCount?: boolean
+}
 const RenderTag = ({ _id, name, count, showCount }: Props) => {
   return (
     <Link href={`/tags/${_id}`} className="flex items-center justify-between ">
@@ -15,9 +15,9 @@ const RenderTag = ({ _id, name, count, showCount }: Props) => {
         {name}
       </Badge>
 
-      {showCount && <span className="small-medium dark:invert">{count}+</span>}
+      {showCount && <span className="small-medium dark:invert">{count}</span>}
     </Link>
-  );
-};
+  )
+}
 
-export default RenderTag;
+export default RenderTag
