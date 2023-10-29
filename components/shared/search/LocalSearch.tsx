@@ -22,6 +22,7 @@ const LocalSearch = ({
   otherClasses,
   path,
 }: CustomInputProps) => {
+  const [searchTerm, setSearchTerm] = React.useState("")
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -58,11 +59,12 @@ const LocalSearch = ({
             type="text"
             name="search"
             placeholder={placeholder}
-            //   value=""
+            value={searchTerm}
             //   onChange={() => {}}
             autoComplete="off"
             defaultValue={searchParams?.get("q") || ""}
             className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none text-dark400_light700 placeholder:!text-slate-600"
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </form>
 

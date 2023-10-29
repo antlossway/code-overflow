@@ -23,9 +23,13 @@ export async function getQuestions(params: GetQuestionsParams) {
     connectToDatabase() // no need await here
     // get all questions
     // searchQuery: pattern should match the title or explanation
-    const questions = await Question.find({
-      title: { $regex: new RegExp(`${searchQuery}`, "i") },
-    })
+    // const questions = await Question.find({
+    //    title: { $regex: new RegExp(`${searchQuery}`, "i") },
+    // })
+    const criteria = searchQuery
+      ? { title: { $regex: new RegExp(`${searchQuery}`, "i") } }
+      : {}
+    const questions = await Question.find(criteria)
       .populate({ path: "tags", model: Tag }) // for those referenced fields, populate them so that we can see the details
       .populate({ path: "author", model: User })
       .sort({ createdAt: -1 }) // sort by createdAt in descending order);
