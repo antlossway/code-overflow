@@ -2,8 +2,9 @@
 
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
-import React from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import React, { useEffect, useState } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils"
 
 type CustomInputProps = {
   route: string
@@ -11,7 +12,6 @@ type CustomInputProps = {
   imgSrc: string
   placeholder: string
   otherClasses: string
-  path: string
 }
 
 const LocalSearch = ({
@@ -20,11 +20,44 @@ const LocalSearch = ({
   imgSrc,
   placeholder,
   otherClasses,
-  path,
 }: CustomInputProps) => {
-  const [searchTerm, setSearchTerm] = React.useState("")
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
+
+  const query = searchParams.get("q")
+  const [search, setSearch] = useState(query || "")
+  // console.log("debug query: ", query)
+
+  useEffect(() => {
+    // debounce, to delay the execution of the search function when user is typing
+    const delayDebounceFn = setTimeout(() => {
+      if (search) {
+        const newUrl = formUrlQuery({
+          // only change the param related to this serach, keep other existing params
+          params: searchParams.toString(),
+          key: "q",
+          value: search,
+        })
+
+        router.push(newUrl, { scroll: false })
+      } else {
+        // console.log(pathname, route)
+        if (pathname === route) {
+          // what is the use of this if statement
+
+          const newUrl = removeKeysFromQuery({
+            params: searchParams.toString(),
+            keys: ["q"],
+          })
+          router.push(newUrl, { scroll: false })
+        }
+      }
+
+      return () => clearTimeout(delayDebounceFn)
+    }, 500)
+  }, [search, router, searchParams, pathname, route])
+  // }, [search, route, pathname, router, serachParams, query])
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -37,7 +70,7 @@ const LocalSearch = ({
       newParams.delete("q")
     }
 
-    router.push(`${path}?${newParams.toString()}`)
+    router.push(`${route}?${newParams.toString()}`)
   }
 
   return (
@@ -59,12 +92,12 @@ const LocalSearch = ({
             type="text"
             name="search"
             placeholder={placeholder}
-            value={searchTerm}
+            value={search}
             //   onChange={() => {}}
             autoComplete="off"
-            defaultValue={searchParams?.get("q") || ""}
+            // defaultValue={searchParams?.get("q") || ""}
             className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none text-dark400_light700 placeholder:!text-slate-600"
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </form>
 

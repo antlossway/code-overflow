@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { HomePageFilters } from "@/context/filters"
 import { getQuestions } from "@/lib/actions/question.action"
 import Link from "next/link"
+import { SearchParamsProps } from "@/types"
 
 // const filterOptions = [
 //   {
@@ -27,8 +28,10 @@ import Link from "next/link"
 //   },
 // ];
 
-export default async function Home({ searchParams: { q } = { q: "" } }) {
-  const result = (await getQuestions({ searchQuery: q })) || { questions: [] }
+export default async function Home({ searchParams }: SearchParamsProps) {
+  const result = (await getQuestions({ searchQuery: searchParams.q })) || {
+    questions: [],
+  }
   // console.log("search params: ", q)
 
   return (
@@ -51,7 +54,6 @@ export default async function Home({ searchParams: { q } = { q: "" } }) {
           imgSrc="/assets/icons/search.svg"
           placeholder="Search questions..."
           otherClasses=""
-          path="/"
         />
         {/* Filters, in smaller screen, it's a selection appear on the right side of question search */}
         <Filter

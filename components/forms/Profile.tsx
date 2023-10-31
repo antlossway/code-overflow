@@ -32,6 +32,7 @@ const Profile = ({ clerkId, user }: Props) => {
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
+
     defaultValues: {
       name: parsedUser.name || "",
       username: parsedUser.username || "",
@@ -60,6 +61,7 @@ const Profile = ({ clerkId, user }: Props) => {
       router.back()
     } catch (error) {
       console.log(error)
+      throw error
     } finally {
       setIsSubmitting(false)
     }
@@ -171,6 +173,7 @@ const Profile = ({ clerkId, user }: Props) => {
             type="submit"
             className="primary-gradient w-fit"
             disabled={isSubmitting}
+            // onClick={onSubmit}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

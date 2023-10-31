@@ -1,16 +1,19 @@
-import LocalSearch from "@/components/shared/search/LocalSearch";
+import LocalSearch from "@/components/shared/search/LocalSearch"
 // import NoResult from "@/components/shared/search/NoResult";
-import { TagFilters } from "@/context/filters";
+import { TagFilters } from "@/context/filters"
 // import { getUsers } from "@/lib/actions/question.action";
-import React from "react";
-import Filter from "@/components/shared/Filter";
-import { getAllTags } from "@/lib/actions/tag.action";
-import NoResult from "@/components/shared/search/NoResult";
-import TagCard from "@/components/cards/TagCard";
+import React from "react"
+import Filter from "@/components/shared/Filter"
+import { getAllTags } from "@/lib/actions/tag.action"
+import NoResult from "@/components/shared/search/NoResult"
+import TagCard from "@/components/cards/TagCard"
+import { SearchParamsProps } from "@/types"
 
-const TagsPage = async () => {
-  const result = (await getAllTags({})) || { tags: [] };
-  console.log("debug community getTags: ", result.tags);
+const TagsPage = async ({ searchParams }: SearchParamsProps) => {
+  const result = (await getAllTags({ searchQuery: searchParams.q })) || {
+    tags: [],
+  }
+  console.log("debug community getTags: ", result.tags)
 
   return (
     <>
@@ -51,7 +54,7 @@ const TagsPage = async () => {
         )}
       </section>
     </>
-  );
-};
+  )
+}
 
-export default TagsPage;
+export default TagsPage

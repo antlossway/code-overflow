@@ -1,19 +1,19 @@
-import QuestionCard from "@/components/cards/QuestionCard";
-import LocalSearch from "@/components/shared/search/LocalSearch";
-import NoResult from "@/components/shared/search/NoResult";
-import { getQuestionsByTagId } from "@/lib/actions/tag.action";
-import { IQuestion } from "@/lib/database/question.model";
-import { URLProps } from "@/types";
-import React from "react";
+import QuestionCard from "@/components/cards/QuestionCard"
+import LocalSearch from "@/components/shared/search/LocalSearch"
+import NoResult from "@/components/shared/search/NoResult"
+import { getQuestionsByTagId } from "@/lib/actions/tag.action"
+import { IQuestion } from "@/lib/database/question.model"
+import { URLProps } from "@/types"
+import React from "react"
 
 const TagDetailPage = async ({ params, searchParams }: URLProps) => {
-  const { tagId } = params;
+  const { tagId } = params
   const result = await getQuestionsByTagId({
     tagId,
     page: 1,
     searchQuery: searchParams.q,
-  });
-  console.log("debug getQuestionsByTagId: ", result);
+  })
+  console.log("debug getQuestionsByTagId: ", result)
   return (
     <>
       <div className="background-light850_dark100 ">
@@ -25,7 +25,7 @@ const TagDetailPage = async ({ params, searchParams }: URLProps) => {
       {/* search tag */}
       <div className="mt-11 w-full">
         <LocalSearch
-          route="/tags"
+          route={`/tags/${tagId}`}
           iconPostion="left"
           imgSrc="/assets/icons/search.svg"
           placeholder="Search tag questions..."
@@ -60,7 +60,7 @@ const TagDetailPage = async ({ params, searchParams }: URLProps) => {
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default TagDetailPage;
+export default TagDetailPage

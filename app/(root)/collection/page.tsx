@@ -1,16 +1,22 @@
-import QuestionCard from "@/components/cards/QuestionCard";
-import Filter from "@/components/shared/Filter";
-import LocalSearch from "@/components/shared/search/LocalSearch";
-import NoResult from "@/components/shared/search/NoResult";
-import { QuestionFilters } from "@/context/filters";
-import { getSavedQuestions } from "@/lib/actions/user.action";
-import { auth } from "@clerk/nextjs";
-export default async function CollectionPage() {
-  const { userId: clerkId } = auth();
-  if (!clerkId) return null;
+import QuestionCard from "@/components/cards/QuestionCard"
+import Filter from "@/components/shared/Filter"
+import LocalSearch from "@/components/shared/search/LocalSearch"
+import NoResult from "@/components/shared/search/NoResult"
+import { QuestionFilters } from "@/context/filters"
+import { getSavedQuestions } from "@/lib/actions/user.action"
+import { SearchParamsProps } from "@/types"
+import { auth } from "@clerk/nextjs"
+export default async function CollectionPage({
+  searchParams,
+}: SearchParamsProps) {
+  const { userId: clerkId } = auth()
+  if (!clerkId) return null
 
-  const result = (await getSavedQuestions({ clerkId })) || { questions: [] };
-  console.log("debug getSavedQuestions: ", result.questions);
+  const result = (await getSavedQuestions({
+    clerkId,
+    searchQuery: searchParams.q,
+  })) || { questions: [] }
+  // console.log("debug getSavedQuestions: ", result.questions);
   return (
     <>
       {/* heading */}
@@ -60,5 +66,5 @@ export default async function CollectionPage() {
         )}
       </div>
     </>
-  );
+  )
 }

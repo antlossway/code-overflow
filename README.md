@@ -58,6 +58,33 @@ lib/database/question.model.ts (28:2) @ models
     // .populate("author", "_id clerkId name picture")
 ```
 
+#### embedded populate
+
+```
+    const query: FilterQuery<typeof Question> = searchQuery
+      ? {
+          $or: [
+            { title: { $regex: new RegExp(searchQuery, "i") } },
+            { explanation: { $regex: new RegExp(searchQuery, "i") } },
+          ],
+        }
+      : {}
+
+    const user = await User.findOne({ clerkId }).populate({
+      path: "savedPosts",
+      match: query,
+      options: {
+        sort: { createdAt: -1 },
+        // paging
+      },
+      // embedded populate on each question
+      populate: [
+        { path: "tags", model: Tag, select: "_id name" },
+        { path: "author", model: User, select: "_id clerkId name picture" },
+      ],
+    })
+```
+
 #### $setOnInsert
 
 when updating a document with `findOneAndUpdate`, use `$setOnInsert` to specify fields that should be set only when a new document is created (i.e., during an `upsert` operation)
@@ -238,6 +265,8 @@ import "../styles/prism.css"
 
 under the hood using react-hook-form
 
+**note** the FormField defined in form has be exactly match Schema that is used with `useForm`, if one field is missing, click submit button will happen nothing and no error display in browser console.
+
 ```
 // @/components/forms/Answer.tsx
 
@@ -263,6 +292,8 @@ const form = useForm<z.infer<typeof AnswersSchema>>({
 ## Form with Zod
 
 ## Next.js features that's new to me
+
+### URL states (debounce search)
 
 ### usePathname
 
@@ -375,6 +406,27 @@ username: username!, // ! means we are sure that this is not null
                   }
 ```
 
+### index signature
+
+`[key: string]` means there can be unlimited key (with string type) in object searchParams.
+the value will be string or undefined.
+example:
+
+```
+searchParms: {
+  name: "Max",
+  title: "student",
+  address: "xxxx",
+  ....
+}
+```
+
+```
+export interface SearchParamsProps {
+  searchParams: { [key: string]: string | undefined };
+}
+```
+
 ## tailwind and CSS
 
 ### responsive
@@ -392,3 +444,10 @@ Anyway, hopefully the `max-sm` is straight-forward name.
 `line-clamp-3` limit content to show 3 lines, remain represent with "..."
 
 ## TinyMCE: library to make rich text editor
+
+## package query-string
+
+```
+npm i query-string
+import qs from "query-string"
+```

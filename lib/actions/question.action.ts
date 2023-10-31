@@ -15,6 +15,7 @@ import User from "../database/user.model"
 import { revalidatePath } from "next/cache"
 import Answer from "../database/answer.model"
 import Interaction from "../database/interaction.model"
+import { FilterQuery } from "mongoose"
 // all server actions
 
 export async function getQuestions(params: GetQuestionsParams) {
@@ -26,10 +27,16 @@ export async function getQuestions(params: GetQuestionsParams) {
     // const questions = await Question.find({
     //    title: { $regex: new RegExp(`${searchQuery}`, "i") },
     // })
-    const criteria = searchQuery
-      ? { title: { $regex: new RegExp(`${searchQuery}`, "i") } }
-      : {}
-    const questions = await Question.find(criteria)
+
+    const query: FilterQuery<typeof Question> = {}
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(`${searchQuery}`, "i") } },
+        { explanation: { $regex: new RegExp(`${searchQuery}`, "i") } },
+      ]
+    }
+
+    const questions = await Question.find(query)
       .populate({ path: "tags", model: Tag }) // for those referenced fields, populate them so that we can see the details
       .populate({ path: "author", model: User })
       .sort({ createdAt: -1 }) // sort by createdAt in descending order);

@@ -1,15 +1,18 @@
-import LocalSearch from "@/components/shared/search/LocalSearch";
+import LocalSearch from "@/components/shared/search/LocalSearch"
 // import NoResult from "@/components/shared/search/NoResult";
-import { UserFilters } from "@/context/filters";
+import { UserFilters } from "@/context/filters"
 // import { getUsers } from "@/lib/actions/question.action";
-import React from "react";
-import Filter from "@/components/shared/Filter";
-import UserCard from "@/components/cards/UserCard";
-import Link from "next/link";
-import { getAllUsers } from "@/lib/actions/user.action";
+import React from "react"
+import Filter from "@/components/shared/Filter"
+import UserCard from "@/components/cards/UserCard"
+import Link from "next/link"
+import { getAllUsers } from "@/lib/actions/user.action"
+import { SearchParamsProps } from "@/types"
 
-const CommunityPage = async () => {
-  const result = (await getAllUsers({})) || { users: [] };
+const CommunityPage = async ({ searchParams }: SearchParamsProps) => {
+  const result = (await getAllUsers({ searchQuery: searchParams.q })) || {
+    users: [],
+  }
   // console.log("debug community getUsers: ", result.users);
 
   return (
@@ -51,7 +54,7 @@ const CommunityPage = async () => {
         )}
       </section>
     </>
-  );
-};
+  )
+}
 
-export default CommunityPage;
+export default CommunityPage
