@@ -170,6 +170,44 @@ in fact, when `AllAnswers` is called, we pass the userId as ObjectID, and althou
       />
 ```
 
+### convert URL params(string type) into mongodb objectId type
+
+** mongoose.Type.ObjectId(stringId) **
+
+```
+// tag.action.ts
+
+    const checkTotalCount = await Tag.aggregate([
+      {
+        $match: { $and: [{ _id: new mongoose.Types.ObjectId(tagId) }, query] },
+      },
+      {
+        $project: {
+          questionCount: { $size: "$questions" },
+        },
+      },
+    ])
+    const totalCount = checkTotalCount[0]?.questionCount || 0
+```
+
+### findById vs query id inside find/aggregate
+
+`findById` can use string argument, it's very forgiving.
+using`find` or `aggregate`, you have to pass ObjectId type ID.
+
+### mongoDB aggregate
+
+to calculate the number of savedPost of a user, need to match the userId and query
+
+```
+// user.action.ts
+  const checkTotalCount = await User.aggregate([
+      { $match: { $and: [{ clerkId }, query] } },
+      { $project: { savedPostsCount: { $size: "$savedPosts" } } },
+    ])
+    const totalCount = checkTotalCount[0].savedPostsCount
+```
+
 ## clert authentication
 
 ### webhook to sync user with mongoDB
@@ -288,6 +326,12 @@ const form = useForm<z.infer<typeof AnswersSchema>>({
       }
 
 ```
+
+### Select
+
+it seems only support uncontrolled Select element.
+in the `<Select></Select>` root element, use `defaultValue` and `onValueChange`.
+`value` and `onChange` is not supported, so no need to use `useState` to track the value of the selection.
 
 ## Form with Zod
 
@@ -450,4 +494,13 @@ Anyway, hopefully the `max-sm` is straight-forward name.
 ```
 npm i query-string
 import qs from "query-string"
+```
+
+## javascript
+
+### convert a string to number using unary plus operator +
+
+```
+// if there is "page" params, then turn that string into number, if not then use 1
+const pageNumber = searchParams?.page ? +searchParams.page : 1
 ```

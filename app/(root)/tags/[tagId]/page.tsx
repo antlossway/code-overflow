@@ -1,19 +1,30 @@
 import QuestionCard from "@/components/cards/QuestionCard"
+import Pagination from "@/components/shared/Pagination"
 import LocalSearch from "@/components/shared/search/LocalSearch"
 import NoResult from "@/components/shared/search/NoResult"
 import { getQuestionsByTagId } from "@/lib/actions/tag.action"
 import { IQuestion } from "@/lib/database/question.model"
-import { URLProps } from "@/types"
 import React from "react"
 
-const TagDetailPage = async ({ params, searchParams }: URLProps) => {
+interface Props {
+  params: { tagId: string }
+  searchParams: { [key: string]: string | undefined }
+}
+
+const pageSize = 2
+const TagDetailPage = async ({ params, searchParams }: Props) => {
+  const page = searchParams?.page ? +searchParams.page : 1
   const { tagId } = params
   const result = await getQuestionsByTagId({
     tagId,
-    page: 1,
+    page,
+    pageSize,
     searchQuery: searchParams.q,
   })
-  console.log("debug getQuestionsByTagId: ", result)
+  // console.log("debug getQuestionsByTagId: ", result)
+  const totalPages = Math.ceil(result.totalCount / pageSize)
+  const isNext = totalPages > page // is there still a next page
+
   return (
     <>
       <div className="background-light850_dark100 ">
@@ -58,6 +69,11 @@ const TagDetailPage = async ({ params, searchParams }: URLProps) => {
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-10 flex-center">
+        <Pagination pageNumber={page} isNext={isNext} />
       </div>
     </>
   )

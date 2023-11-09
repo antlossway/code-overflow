@@ -1,22 +1,34 @@
 import QuestionCard from "@/components/cards/QuestionCard"
 import Filter from "@/components/shared/Filter"
+import Pagination from "@/components/shared/Pagination"
 import LocalSearch from "@/components/shared/search/LocalSearch"
 import NoResult from "@/components/shared/search/NoResult"
 import { QuestionFilters } from "@/context/filters"
 import { getSavedQuestions } from "@/lib/actions/user.action"
 import { SearchParamsProps } from "@/types"
 import { auth } from "@clerk/nextjs"
+
+const pageSize = 2
 export default async function CollectionPage({
   searchParams,
 }: SearchParamsProps) {
   const { userId: clerkId } = auth()
   if (!clerkId) return null
 
+  const page = searchParams?.page ? +searchParams.page : 1
+
   const result = (await getSavedQuestions({
     clerkId,
     searchQuery: searchParams.q,
-  })) || { questions: [] }
-  // console.log("debug getSavedQuestions: ", result.questions);
+    filter: searchParams.filter,
+    page,
+    pageSize,
+  })) || { questions: [], totalCount: 0 }
+
+  console.log("debug collection getSavedQuestions: ", result.totalCount)
+
+  const totalPages = Math.ceil(result.totalCount / pageSize)
+
   return (
     <>
       {/* heading */}
@@ -64,6 +76,11 @@ export default async function CollectionPage({
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-10 flex-center">
+        <Pagination pageNumber={page} isNext={totalPages > page} />
       </div>
     </>
   )

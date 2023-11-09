@@ -16,18 +16,15 @@ import { revalidatePath } from "next/cache"
 import Answer from "../database/answer.model"
 import Interaction from "../database/interaction.model"
 import { FilterQuery } from "mongoose"
+
 // all server actions
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
-    const { page = 1, pageSize = 20, searchQuery } = params
+    const { page = 1, pageSize = 20, searchQuery, filter } = params
     connectToDatabase() // no need await here
     // get all questions
     // searchQuery: pattern should match the title or explanation
-    // const questions = await Question.find({
-    //    title: { $regex: new RegExp(`${searchQuery}`, "i") },
-    // })
-
     const query: FilterQuery<typeof Question> = {}
     if (searchQuery) {
       query.$or = [
@@ -36,12 +33,32 @@ export async function getQuestions(params: GetQuestionsParams) {
       ]
     }
 
+    let sortOptions = {}
+    switch (filter) {
+      case "unanswered":
+        query.answers = { $size: 0 } // {answers: {$size: 0} }
+        break
+      case "frequent":
+        sortOptions = { views: -1 }
+        break
+      case "recommended":
+        sortOptions = { views: -1 }
+        break
+      default: // newest
+        sortOptions = { createdAt: -1 }
+    }
+
     const questions = await Question.find(query)
       .populate({ path: "tags", model: Tag }) // for those referenced fields, populate them so that we can see the details
       .populate({ path: "author", model: User })
-      .sort({ createdAt: -1 }) // sort by createdAt in descending order);
+      .sort(sortOptions) // sort by createdAt in descending order);
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+
+    const totalCount = await Question.countDocuments(query)
+
     // return response
-    return { questions }
+    return { questions, totalCount }
   } catch (error) {
     console.log(error)
   }

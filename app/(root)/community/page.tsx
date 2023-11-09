@@ -8,12 +8,23 @@ import UserCard from "@/components/cards/UserCard"
 import Link from "next/link"
 import { getAllUsers } from "@/lib/actions/user.action"
 import { SearchParamsProps } from "@/types"
+import Pagination from "@/components/shared/Pagination"
 
+const pageSize = 2
 const CommunityPage = async ({ searchParams }: SearchParamsProps) => {
-  const result = (await getAllUsers({ searchQuery: searchParams.q })) || {
+  const page = searchParams?.page ? +searchParams.page : 1
+  const result = (await getAllUsers({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+    page,
+    pageSize,
+  })) || {
     users: [],
+    totalCount: 0,
   }
   // console.log("debug community getUsers: ", result.users);
+  const totalPages = Math.ceil(result.totalCount / pageSize)
+  const isNext = totalPages > page // is there still a next page
 
   return (
     <>
@@ -53,6 +64,11 @@ const CommunityPage = async ({ searchParams }: SearchParamsProps) => {
           </div>
         )}
       </section>
+
+      {/* Pagination */}
+      <div className="mt-10 flex-center">
+        <Pagination pageNumber={page} isNext={isNext} />
+      </div>
     </>
   )
 }

@@ -1,22 +1,22 @@
-import { getUserInfo } from "@/lib/actions/user.action";
-import Image from "next/image";
-import React from "react";
-import { getJoinedDate } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { URLProps } from "@/types";
-import { SignedIn, auth } from "@clerk/nextjs";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProfileLink from "@/components/shared/ProfileLink";
-import Stats from "@/components/shared/Stats";
-import QuestionTab from "@/components/shared/QuestionTab";
-import AnswersTab from "@/components/shared/AnswersTab";
+import { getUserInfo } from "@/lib/actions/user.action"
+import Image from "next/image"
+import React from "react"
+import { getJoinedDate } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { URLProps } from "@/types"
+import { SignedIn, auth } from "@clerk/nextjs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import ProfileLink from "@/components/shared/ProfileLink"
+import Stats from "@/components/shared/Stats"
+import QuestionTab from "@/components/shared/QuestionTab"
+import AnswersTab from "@/components/shared/AnswersTab"
 
 const ProfilePage = async ({ params, searchParams }: URLProps) => {
-  const { userId: clerkId } = auth(); // this is currently loggined in user
+  const { userId: clerkId } = auth() // this is currently loggined in user
   // params.id is the user id of the profile page we are visiting
-  const result = await getUserInfo({ userId: params.id });
-  console.log("debug profile page: ", result);
+  const result = await getUserInfo({ userId: params.id })
+  console.log("debug profile page: ", result)
 
   return (
     <div className="p-2 w-full">
@@ -109,12 +109,11 @@ const ProfilePage = async ({ params, searchParams }: URLProps) => {
               userId={result.user._id}
               clerkId={clerkId}
             />
-            AnswersTab
           </TabsContent>
         </Tabs>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProfilePage;
+export default ProfilePage

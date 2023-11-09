@@ -1,31 +1,35 @@
-import Answer from "@/components/forms/Answer";
-import AllAnswers from "@/components/shared/AllAnswers";
-import Metric from "@/components/shared/Metric";
-import ParseHTML from "@/components/shared/ParseHTML";
-import RenderTag from "@/components/shared/RenderTag";
-import Votes from "@/components/shared/Votes";
-import { getQuestionById } from "@/lib/actions/question.action";
-import { getUserById } from "@/lib/actions/user.action";
-import { formatBigNumber, getTimesAgo } from "@/lib/utils";
-import { auth } from "@clerk/nextjs";
-import Image from "next/image";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import React from "react";
+import Answer from "@/components/forms/Answer"
+import AllAnswers from "@/components/shared/AllAnswers"
+import Metric from "@/components/shared/Metric"
+import ParseHTML from "@/components/shared/ParseHTML"
+import RenderTag from "@/components/shared/RenderTag"
+import Votes from "@/components/shared/Votes"
+import { getQuestionById } from "@/lib/actions/question.action"
+import { getUserById } from "@/lib/actions/user.action"
+import { formatBigNumber, getTimesAgo } from "@/lib/utils"
+import { auth } from "@clerk/nextjs"
+import Image from "next/image"
+import Link from "next/link"
+import { redirect } from "next/navigation"
+import React from "react"
 
-type QuestionParams = {
+interface QuestionParams {
   params: {
-    questionId: string;
-  };
-};
-const QuestionDetail = async ({ params }: QuestionParams) => {
-  const { questionId } = params;
-  const result = (await getQuestionById({ questionId })).question || {};
+    questionId: string
+  }
+  searchParams: {
+    [key: string]: string | undefined
+  }
+}
+const QuestionDetail = async ({ params, searchParams }: QuestionParams) => {
+  const { questionId } = params
+
+  const result = (await getQuestionById({ questionId })).question || {}
   // console.log("debug question detail: ", result);
 
-  const { userId: clerkId } = auth();
-  if (!clerkId) redirect("/sign-in");
-  const mongoUser = await getUserById({ userId: clerkId });
+  const { userId: clerkId } = auth()
+  if (!clerkId) redirect("/sign-in")
+  const mongoUser = await getUserById({ userId: clerkId })
   // console.log(`debug clerkId: ${clerkId}, mongoUser ${mongoUser}`);
 
   return (
@@ -112,6 +116,8 @@ const QuestionDetail = async ({ params }: QuestionParams) => {
         questionId={result._id}
         userId={mongoUser._id} // type is objectId, not string
         totalAnswers={result.answers.length}
+        filter={searchParams?.filter}
+        page={searchParams?.page}
       />
 
       {/* Answer form */}
@@ -120,7 +126,7 @@ const QuestionDetail = async ({ params }: QuestionParams) => {
         questionId={questionId}
       />
     </>
-  );
-};
+  )
+}
 
-export default QuestionDetail;
+export default QuestionDetail

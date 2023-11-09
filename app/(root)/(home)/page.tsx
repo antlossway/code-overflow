@@ -8,31 +8,22 @@ import { HomePageFilters } from "@/context/filters"
 import { getQuestions } from "@/lib/actions/question.action"
 import Link from "next/link"
 import { SearchParamsProps } from "@/types"
+import Pagination from "@/components/shared/Pagination"
 
-// const filterOptions = [
-//   {
-//     _id: 1,
-//     value: "newest",
-//   },
-//   {
-//     _id: 2,
-//     value: "recommended",
-//   },
-//   {
-//     _id: 3,
-//     value: "frequent",
-//   },
-//   {
-//     _id: 4,
-//     value: "unanswered",
-//   },
-// ];
-
+const pageSize = 2
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const result = (await getQuestions({ searchQuery: searchParams.q })) || {
+  const page = searchParams?.page ? +searchParams.page : 1
+  const result = (await getQuestions({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+    page, // current page number
+    pageSize,
+  })) || {
     questions: [],
+    totalCount: 0,
   }
-  // console.log("search params: ", q)
+
+  const totalPages = Math.ceil(result.totalCount / pageSize)
 
   return (
     <>
@@ -90,6 +81,11 @@ export default async function Home({ searchParams }: SearchParamsProps) {
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-10 flex-center">
+        <Pagination pageNumber={page} isNext={totalPages > page} />
       </div>
     </>
   )

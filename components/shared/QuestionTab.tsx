@@ -1,23 +1,30 @@
-import React from "react";
-import QuestionCard from "../cards/QuestionCard";
-import { SearchParamsProps } from "@/types";
-import { getUserQuestions } from "@/lib/actions/user.action";
+import React from "react"
+import QuestionCard from "../cards/QuestionCard"
+import { SearchParamsProps } from "@/types"
+import { getUserQuestions } from "@/lib/actions/user.action"
+import Pagination from "./Pagination"
 
 interface QuestionTabProps extends SearchParamsProps {
-  userId: string;
-  clerkId?: string | null;
+  userId: string
+  clerkId?: string | null
   // searchParams: any;
 }
+const pageSize = 2
 const QuestionTab = async ({
   searchParams,
   userId,
   clerkId,
 }: QuestionTabProps) => {
+  const page = searchParams?.page ? +searchParams.page : 1
+
   const result = await getUserQuestions({
     userId,
-    page: 1,
-  });
+    page,
+    pageSize,
+  })
   // console.log("debug question tab clerkId: ", clerkId);
+  const totalPage = Math.ceil(result.totalQuestions / pageSize)
+  const isNext = totalPage > page
   return (
     <>
       {result.questions.map((question) => (
@@ -34,8 +41,13 @@ const QuestionTab = async ({
           createdAt={question.createdAt}
         />
       ))}
-    </>
-  );
-};
 
-export default QuestionTab;
+      {/* Pagination */}
+      <div className="mt-10 flex-center">
+        <Pagination pageNumber={page} isNext={isNext} />
+      </div>
+    </>
+  )
+}
+
+export default QuestionTab

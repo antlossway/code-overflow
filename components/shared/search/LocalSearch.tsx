@@ -59,19 +59,19 @@ const LocalSearch = ({
   }, [search, router, searchParams, pathname, route])
   // }, [search, route, pathname, router, serachParams, query])
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const search = e.currentTarget.search as HTMLInputElement
-    const newParams = new URLSearchParams(searchParams.toString())
+  // const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault()
+  //   const search = e.currentTarget.search as HTMLInputElement
+  //   const newParams = new URLSearchParams(searchParams.toString())
 
-    if (search.value) {
-      newParams.set("q", search.value)
-    } else {
-      newParams.delete("q")
-    }
+  //   if (search.value) {
+  //     newParams.set("q", search.value)
+  //   } else {
+  //     newParams.delete("q")
+  //   }
 
-    router.push(`${route}?${newParams.toString()}`)
-  }
+  //   router.push(`${route}?${newParams.toString()}`)
+  // }
 
   return (
     <div className="relative w-full ">
@@ -87,19 +87,17 @@ const LocalSearch = ({
             className="cursor-pointer"
           />
         )}
-        <form onSubmit={onSubmit}>
-          <Input
-            type="text"
-            name="search"
-            placeholder={placeholder}
-            value={search}
-            //   onChange={() => {}}
-            autoComplete="off"
-            // defaultValue={searchParams?.get("q") || ""}
-            className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none text-dark400_light700 placeholder:!text-slate-600"
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </form>
+        <Input
+          type="text"
+          name="search"
+          placeholder={placeholder}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          //   onChange={() => {}}
+          autoComplete="off"
+          // defaultValue={searchParams?.get("q") || ""}
+          className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none text-dark400_light700 placeholder:!text-slate-600"
+        />
 
         {iconPostion === "right" && (
           <Image

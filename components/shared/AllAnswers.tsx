@@ -1,21 +1,24 @@
-import { getAnswers } from "@/lib/actions/answer.action";
-import Image from "next/image";
-import React from "react";
-import ParseHTML from "./ParseHTML";
-import Filter from "./Filter";
-import { AnswerFilters } from "@/context/filters";
-import Link from "next/link";
-import { getTimesAgo } from "@/lib/utils";
-import Votes from "./Votes";
-import { auth } from "@clerk/nextjs";
+import { getAnswers } from "@/lib/actions/answer.action"
+import Image from "next/image"
+import React from "react"
+import ParseHTML from "./ParseHTML"
+import Filter from "./Filter"
+import { AnswerFilters } from "@/context/filters"
+import Link from "next/link"
+import { getTimesAgo } from "@/lib/utils"
+import Votes from "./Votes"
+import { auth } from "@clerk/nextjs"
+import Pagination from "./Pagination"
 
 type Props = {
-  questionId: string;
-  userId: string;
-  totalAnswers: number;
-  page?: number;
-  filter?: string;
-};
+  questionId: string
+  userId: string
+  totalAnswers: number
+  page?: string
+  filter?: string
+}
+
+const pageSize = 1
 const AllAnswers = async ({
   questionId,
   userId,
@@ -23,13 +26,23 @@ const AllAnswers = async ({
   page,
   filter,
 }: Props) => {
-  const { userId: clerkId } = auth();
-  if (!clerkId) return;
+  const { userId: clerkId } = auth()
+  if (!clerkId) return
 
-  const answers = await getAnswers({ questionId });
-  if (!answers) return <p>No Answers</p>;
+  const currentPage = page ? +page : 1 // +page convert string to number
 
-  console.log("debug all answers: ", answers);
+  const { answers, totalCount } = await getAnswers({
+    questionId,
+    sortBy: filter,
+    page: currentPage,
+    pageSize,
+  })
+  if (!answers) return <p>No Answers</p>
+
+  const totalPages = Math.ceil(totalCount / pageSize)
+  const isNext = totalPages > currentPage
+
+  // console.log("debug all answers: ", answers);
 
   return (
     <div className="mt-11">
@@ -85,8 +98,13 @@ const AllAnswers = async ({
           </article>
         ))}
       </div>
-    </div>
-  );
-};
 
-export default AllAnswers;
+      {/* Pagination */}
+      <div className="mt-10 flex-center">
+        <Pagination pageNumber={currentPage} isNext={isNext} />
+      </div>
+    </div>
+  )
+}
+
+export default AllAnswers

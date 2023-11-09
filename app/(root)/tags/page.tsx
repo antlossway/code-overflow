@@ -8,13 +8,23 @@ import { getAllTags } from "@/lib/actions/tag.action"
 import NoResult from "@/components/shared/search/NoResult"
 import TagCard from "@/components/cards/TagCard"
 import { SearchParamsProps } from "@/types"
+import Pagination from "@/components/shared/Pagination"
 
+const pageSize = 2
 const TagsPage = async ({ searchParams }: SearchParamsProps) => {
-  const result = (await getAllTags({ searchQuery: searchParams.q })) || {
+  const page = searchParams?.page ? +searchParams.page : 1
+  const result = (await getAllTags({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+    page,
+    pageSize,
+  })) || {
     tags: [],
+    totalCount: 0,
   }
-  console.log("debug community getTags: ", result.tags)
 
+  const totalPages = Math.ceil(result.totalCount / pageSize)
+  const isNext = totalPages > page // is there still a next page
   return (
     <>
       {/* heading */}
@@ -53,6 +63,11 @@ const TagsPage = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </section>
+
+      {/* Pagination */}
+      <div className="mt-10 flex-center">
+        <Pagination pageNumber={page} isNext={isNext} />
+      </div>
     </>
   )
 }
