@@ -103,16 +103,19 @@ export async function createQuestion(params: CreateQuestionParams) {
     )
 
     // TODO: create an interation record for the user's ask_question action
-
+    await Interaction.create({
+      user: author,
+      action: "ask_question",
+      question: question._id,
+      tags: tagDocuments,
+    })
     // increment author's reputation
-    const updatedUser = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       author,
       { $inc: { reputation: 5 } },
       { new: true }
     )
-    console.log("debug createQuestion add reputation for user: ", updatedUser)
 
-    // await question.save()
     console.log("new question saved to DB")
     // reload the home page to show the newly created question
     revalidatePath(path)
@@ -180,7 +183,18 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
       throw new Error("Question not found")
     }
 
-    // TODO: increment voter's reputation
+    // increment voter's reputation by +1/-1 for upvote/downvote
+    await User.findByIdAndUpdate(
+      userId,
+      { $inc: { reputation: hasupVoted ? -1 : 1 } },
+      { new: true }
+    )
+    // increment author's reputation by +10/-10 for receiving upvote/downvote
+    await User.findByIdAndUpdate(
+      question.author,
+      { $inc: { reputation: hasupVoted ? -10 : 10 } },
+      { new: true }
+    )
 
     revalidatePath(path)
   } catch (error) {
@@ -192,7 +206,7 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
 export async function downvoteQuestion(params: QuestionVoteParams) {
   try {
     const { questionId, userId, hasupVoted, hasdownVoted, path } = params
-    console.log("debug downvoteQuestion", params)
+    // console.log("debug downvoteQuestion", params)
     // connect to DB
     connectToDatabase() // no need await here
 
@@ -224,7 +238,17 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     }
 
     // TODO: increment voter's reputation
+    if (question.author.toString() !== userId) {
+      // add +2 to the voter's reputation
+      await User.findByIdAndUpdate(userId, {
+        $inc: { reputation: hasupVoted ? -2 : 2 },
+      })
 
+      // add +10 to the author(the one who write the answer)'s reputation
+      await User.findByIdAndUpdate(question.author, {
+        $inc: { reputation: hasupVoted ? -10 : 10 },
+      })
+    }
     revalidatePath(path)
   } catch (error) {
     console.log(error)

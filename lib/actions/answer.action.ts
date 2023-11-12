@@ -10,6 +10,7 @@ import {
 import { revalidatePath } from "next/cache"
 import Question from "../database/question.model"
 import Interaction from "../database/interaction.model"
+import User from "../database/user.model"
 
 export async function getAnswers(params: GetAnswersParams) {
   try {
@@ -63,7 +64,7 @@ export async function getAnswers(params: GetAnswersParams) {
 export async function createAnswer(params: CreateAnswerParams) {
   try {
     connectToDatabase()
-    const { content, author, question, path } = params
+    const { content, author, question, path } = params // question is questionId
     // console.log("debug createAnswer params.path:", path);
 
     const answer = await Answer.create({
@@ -72,13 +73,30 @@ export async function createAnswer(params: CreateAnswerParams) {
       question, // questionId
     })
     // await answer.save();
-    console.log("new answer saved to DB: ", answer)
+    // console.log("new answer saved to DB: ", answer)
 
     // update question to include the answer
-    await Question.findByIdAndUpdate(question, {
-      $push: { answers: answer._id },
+    const questionObj = await Question.findByIdAndUpdate(
+      question,
+      {
+        $push: { answers: answer._id },
+      },
+      { new: true }
+    )
+
+    // add interaction
+    await Interaction.create({
+      user: author,
+      action: "answer",
+      question, // questionId
+      answer: answer._id,
+      tags: questionObj.tags,
     })
-    console.log("question updated with new answer")
+
+    // add reputation to author of the answer
+    await User.findByIdAndUpdate(author, {
+      $inc: { reputation: 10 },
+    })
 
     revalidatePath(path)
   } catch (error) {
@@ -110,6 +128,7 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
         $pull: { downvotes: userId },
       }
     } else {
+      // user has not voted before
       updateQuery = {
         $addToSet: { upvotes: userId },
       }
@@ -123,7 +142,18 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
       throw new Error("Answer not found")
     }
 
-    // TODO: increment voter's reputation
+    // TODO: increment voter's reputation, if voter is not the author of the answer, add +2 to the voter's reputation, and add +10 to the author(the one who write the answer)'s reputation
+    if (answer.author.toString() !== userId) {
+      // add +2 to the voter's reputation
+      await User.findByIdAndUpdate(userId, {
+        $inc: { reputation: hasupVoted ? -2 : 2 },
+      })
+
+      // add +10 to the author(the one who write the answer)'s reputation
+      await User.findByIdAndUpdate(answer.author, {
+        $inc: { reputation: hasupVoted ? -10 : 10 },
+      })
+    }
 
     revalidatePath(path)
   } catch (error) {
@@ -169,7 +199,17 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
     }
 
     // TODO: increment voter's reputation
+    if (answer.author.toString() !== userId) {
+      // add +2 to the voter's reputation
+      await User.findByIdAndUpdate(userId, {
+        $inc: { reputation: hasdownVoted ? 2 : -2 },
+      })
 
+      // add +10 to the author(the one who write the answer)'s reputation
+      await User.findByIdAndUpdate(answer.author, {
+        $inc: { reputation: hasdownVoted ? 10 : -10 },
+      })
+    }
     revalidatePath(path)
   } catch (error) {
     console.log(error)
