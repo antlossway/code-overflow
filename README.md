@@ -25,11 +25,21 @@ module.exports = {
 ```
 brew install mongosh
 
+// connect to Atlas DB
+mongosh "mongodb+srv://username:password@YOUR_CLUSTER_NAME.YOUR_HASH.mongodb.net/"
+
 // filter questions belong to a author and select only the title field
 codeflow> db.questions.find({author: ObjectId("65288f20e1487081ce9ff8c3")},{title:1,_id:0})
 ```
 
-### mongoose: mongodb object modeling for node.js
+### mongoose:
+
+> Mongoose is a node.js-based Object Data Modeling(ODM) libray for MongoDB.
+> It is akin to an Object Relational Mapper(ORM) for SQL databases.
+> Mongoose enforce a specific schema at the application layer, and offers a variety of hooks, model validation, and other features aimed at making it easier to work with MongoDB.
+> We don't have to use Mongoose, we can use MongoDB Node.js driver, it will not be aware of the object data modeling, we simply write queries against the database and collections.
+
+#### MongoDB Object Modeling for node.js
 
 **note** don't forget "use server" at the top of server action file, otherwise will get error like "TypeError: mongooseWEBPACK_IMPORTED_MODULE_0.models is undefined
 Source
@@ -504,3 +514,8 @@ import qs from "query-string"
 // if there is "page" params, then turn that string into number, if not then use 1
 const pageNumber = searchParams?.page ? +searchParams.page : 1
 ```
+
+### never use async/await inside forEach !!!
+
+alternative: use for...of
+or use Promise.all(items.map(async item => await doSomething(item))

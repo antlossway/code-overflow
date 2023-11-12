@@ -88,22 +88,31 @@ export async function createQuestion(params: CreateQuestionParams) {
         { $setOnInsert: { name: tag }, $push: { questions: question._id } },
         { upsert: true, new: true }
       )
-
       tagDocuments.push(existingTag._id)
     }
 
     // update question to include the tags
-    await Question.findByIdAndUpdate(question._id, {
-      $push: {
-        tags: { $each: tagDocuments },
+    await Question.findByIdAndUpdate(
+      question._id,
+      {
+        $push: {
+          tags: { $each: tagDocuments },
+        },
       },
-    })
+      { new: true } // return the updated document, although here there is no return
+    )
 
     // TODO: create an interation record for the user's ask_question action
 
     // increment author's reputation
+    const updatedUser = await User.findByIdAndUpdate(
+      author,
+      { $inc: { reputation: 5 } },
+      { new: true }
+    )
+    console.log("debug createQuestion add reputation for user: ", updatedUser)
 
-    await question.save()
+    // await question.save()
     console.log("new question saved to DB")
     // reload the home page to show the newly created question
     revalidatePath(path)

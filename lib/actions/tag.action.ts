@@ -1,6 +1,6 @@
 "use server"
 
-import Tag, { ITag } from "../database/tag.model"
+import Tag from "../database/tag.model"
 import User from "../database/user.model"
 import { connectToDatabase } from "../mongoose"
 import {

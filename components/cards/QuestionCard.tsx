@@ -1,30 +1,30 @@
-import React from "react";
-import RenderTag from "../shared/RenderTag";
-import Link from "next/link";
-import Metric from "../shared/Metric";
-import { formatBigNumber, getTimesAgo } from "@/lib/utils";
-import { SignedIn } from "@clerk/nextjs";
-import EditDeleteAction from "../shared/EditDeleteAction";
+import React from "react"
+import RenderTag from "../shared/RenderTag"
+import Link from "next/link"
+import Metric from "../shared/Metric"
+import { formatBigNumber, getTimesAgo } from "@/lib/utils"
+import { SignedIn } from "@clerk/nextjs"
+import EditDeleteAction from "../shared/EditDeleteAction"
 
 type QuestionCardProps = {
-  _id: string;
-  title: string;
+  _id: string
+  title: string
   tags?: {
-    _id: string;
-    name: string;
-  }[];
+    _id: string
+    name: string
+  }[]
   author: {
-    _id: string;
-    clerkId: string;
-    name: string;
-    picture: string;
-  };
-  upvotes: Array<object>;
-  answers?: Array<object>;
-  views?: number;
-  createdAt: Date;
-  clerkId?: string | null;
-};
+    _id: string
+    clerkId: string
+    name: string
+    picture: string
+  }
+  upvotes: Array<object>
+  answers?: Array<object>
+  views?: number
+  createdAt: Date
+  clerkId?: string | null
+}
 const QuestionCard = ({
   _id,
   clerkId,
@@ -37,8 +37,6 @@ const QuestionCard = ({
   createdAt,
 }: QuestionCardProps) => {
   // console.log("debug clerkId vs author.clerkId: ", clerkId, author.clerkId);
-
-  console.log("debug QuestionCard _id: ", _id);
 
   return (
     <div className="card-wrapper rounded-lg p-6 sm:px-11 ">
@@ -115,7 +113,7 @@ const QuestionCard = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default QuestionCard;
+export default QuestionCard
