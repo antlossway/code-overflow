@@ -16,7 +16,7 @@ const ProfilePage = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth() // this is currently loggined in user
   // params.id is the user id of the profile page we are visiting
   const result = await getUserInfo({ userId: params.id })
-  console.log("debug profile page: ", result)
+  // console.log("debug profile page: ", result)
 
   return (
     <div className="p-2 w-full">
@@ -83,7 +83,13 @@ const ProfilePage = async ({ params, searchParams }: URLProps) => {
       </div>
 
       {/* stats */}
-      <Stats result={result} />
+      {/* <Stats result={result} /> */}
+      <Stats
+        reputation={result.reputation}
+        totalQuestions={result.totalQuestions}
+        totalAnswers={result.totalAnswers}
+        badges={result.badgeCounts}
+      />
 
       {/* tabs */}
       <div className="mt-10 flex gap-10">
