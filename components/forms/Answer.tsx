@@ -1,5 +1,5 @@
-"use client";
-import React, { useRef, useState } from "react";
+"use client"
+import React, { useRef, useState } from "react"
 import {
   Form,
   FormControl,
@@ -7,57 +7,88 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from "../ui/form";
-import { useForm } from "react-hook-form";
-import { AnswersSchema } from "@/lib/validations";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Editor } from "@tinymce/tinymce-react";
-import { useTheme } from "@/context/ThemeProvider";
-import { Button } from "../ui/button";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { createAnswer } from "@/lib/actions/answer.action";
+} from "../ui/form"
+import { useForm } from "react-hook-form"
+import { AnswersSchema } from "@/lib/validations"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Editor } from "@tinymce/tinymce-react"
+import { useTheme } from "@/context/ThemeProvider"
+import { Button } from "../ui/button"
+import Image from "next/image"
+import { usePathname } from "next/navigation"
+import { createAnswer } from "@/lib/actions/answer.action"
 
 type AnswerProps = {
-  mongoUserId: string;
-  questionId: string;
-};
-const Answer = ({ mongoUserId, questionId }: AnswerProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { mode } = useTheme();
-  console.log({ mode });
-  const editorRef = useRef(null);
-  const pathname = usePathname();
+  mongoUserId: string
+  questionId: string
+  question: string
+}
+const Answer = ({ mongoUserId, questionId, question }: AnswerProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmittingAI, setIsSubmittingAI] = useState(false)
+  const { mode } = useTheme()
+  // console.log({ mode })
+  const editorRef = useRef(null)
+  const pathname = usePathname()
 
   const form = useForm<z.infer<typeof AnswersSchema>>({
     resolver: zodResolver(AnswersSchema),
     defaultValues: {
       answer: "",
     },
-  });
+  })
 
   async function handleCreateAnswer(values: z.infer<typeof AnswersSchema>) {
-    setIsSubmitting(true);
+    setIsSubmitting(true)
     try {
       await createAnswer({
         content: values.answer,
         question: questionId, // the question that the answer belongs to
         author: JSON.parse(mongoUserId), // the user who answer the question
         path: pathname,
-      });
+      })
       // clear form state, but the editor still has the content
-      form.reset();
+      form.reset()
       // clear editor
       if (editorRef.current) {
-        const editor = editorRef.current as any;
-        editor.setContent("");
+        const editor = editorRef.current as any
+        editor.setContent("")
       }
     } catch (error) {
-      console.log(error);
-      throw error;
+      console.log(error)
+      throw error
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
+    }
+  }
+  const genereateAIAnswer = async () => {
+    if (!mongoUserId) return
+
+    setIsSubmittingAI(true)
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            question,
+          }),
+        }
+      )
+      const aiAnswer = await res.json()
+      const formattedAnswer = aiAnswer.reply.replace(/\n/g, "<br />")
+      // alert(aiAnswer.reply)
+      if (editorRef.current) {
+        const editor = editorRef.current as any
+        editor.setContent(formattedAnswer)
+      }
+      // Toast...
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsSubmittingAI(false)
     }
   }
 
@@ -69,16 +100,22 @@ const Answer = ({ mongoUserId, questionId }: AnswerProps) => {
         </h4>
         <Button
           className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
-          onClick={() => {}}
+          onClick={genereateAIAnswer}
         >
-          <Image
-            src="/assets/icons/stars.svg"
-            alt="star"
-            width={12}
-            height={12}
-            className="object-contain"
-          />
-          Generate an AI Answer
+          {isSubmittingAI ? (
+            <>Generating...</>
+          ) : (
+            <>
+              <Image
+                src="/assets/icons/stars.svg"
+                alt="star"
+                width={12}
+                height={12}
+                className="object-contain"
+              />
+              Generate AI Answer
+            </>
+          )}
         </Button>
       </div>
       <Form {...form}>
@@ -154,7 +191,7 @@ const Answer = ({ mongoUserId, questionId }: AnswerProps) => {
         </form>
       </Form>
     </div>
-  );
-};
+  )
+}
 
-export default Answer;
+export default Answer

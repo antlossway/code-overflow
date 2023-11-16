@@ -2,7 +2,9 @@
 
 Following JSmastery course
 
-## Next.js server actions
+## Next.js
+
+### server actions
 
 run server code without having to create an API endpoint
 [https://makerkit.dev/blog/tutorials/nextjs-server-actions](https://makerkit.dev/blog/tutorials/nextjs-server-actions)
@@ -16,6 +18,19 @@ module.exports = {
     serverActions: true,
   }
 };
+```
+
+### API route simulate fetch query delay
+
+```
+export const POST = async (request: Request) => {
+  ...
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // console.log("simulate chatgpt api response")
+      resolve(NextResponse.json({ reply: "here is a new AnswerFilters" }))
+    }, 3000)
+  })
 ```
 
 ## mongo DB

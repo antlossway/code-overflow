@@ -9,6 +9,7 @@ import { getQuestions } from "@/lib/actions/question.action"
 import Link from "next/link"
 import { SearchParamsProps } from "@/types"
 import Pagination from "@/components/shared/Pagination"
+import Loading from "./loading"
 
 const pageSize = 2
 export default async function Home({ searchParams }: SearchParamsProps) {
@@ -22,6 +23,10 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     questions: [],
     totalCount: 0,
   }
+
+  // below simulate loading states
+  const isLoading = false
+  if (isLoading) return <Loading />
 
   const totalPages = Math.ceil(result.totalCount / pageSize)
 

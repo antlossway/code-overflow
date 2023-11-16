@@ -9,6 +9,7 @@ import Link from "next/link"
 import { getAllUsers } from "@/lib/actions/user.action"
 import { SearchParamsProps } from "@/types"
 import Pagination from "@/components/shared/Pagination"
+import Loading from "./loading"
 
 const pageSize = 2
 const CommunityPage = async ({ searchParams }: SearchParamsProps) => {
@@ -22,6 +23,9 @@ const CommunityPage = async ({ searchParams }: SearchParamsProps) => {
     users: [],
     totalCount: 0,
   }
+
+  const isLoading = false
+  if (isLoading) return <Loading />
   // console.log("debug community getUsers: ", result.users);
   const totalPages = Math.ceil(result.totalCount / pageSize)
   const isNext = totalPages > page // is there still a next page

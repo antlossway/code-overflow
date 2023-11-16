@@ -124,6 +124,7 @@ const QuestionDetail = async ({ params, searchParams }: QuestionParams) => {
       <Answer
         mongoUserId={JSON.stringify(mongoUser._id)}
         questionId={questionId}
+        question={result.explanation}
       />
     </>
   )
