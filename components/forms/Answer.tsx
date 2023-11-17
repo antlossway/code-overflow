@@ -18,6 +18,7 @@ import { Button } from "../ui/button"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { createAnswer } from "@/lib/actions/answer.action"
+import { useToast } from "../ui/use-toast"
 
 type AnswerProps = {
   mongoUserId: string
@@ -31,6 +32,8 @@ const Answer = ({ mongoUserId, questionId, question }: AnswerProps) => {
   // console.log({ mode })
   const editorRef = useRef(null)
   const pathname = usePathname()
+
+  const { toast } = useToast()
 
   const form = useForm<z.infer<typeof AnswersSchema>>({
     resolver: zodResolver(AnswersSchema),
@@ -48,6 +51,10 @@ const Answer = ({ mongoUserId, questionId, question }: AnswerProps) => {
         author: JSON.parse(mongoUserId), // the user who answer the question
         path: pathname,
       })
+
+      toast({
+        description: "Answer Created Successfully",
+      })
       // clear form state, but the editor still has the content
       form.reset()
       // clear editor
@@ -62,6 +69,7 @@ const Answer = ({ mongoUserId, questionId, question }: AnswerProps) => {
       setIsSubmitting(false)
     }
   }
+
   const genereateAIAnswer = async () => {
     if (!mongoUserId) return
 
@@ -85,6 +93,9 @@ const Answer = ({ mongoUserId, questionId, question }: AnswerProps) => {
         editor.setContent(formattedAnswer)
       }
       // Toast...
+      // toast({
+      //   description: "AI Answer Generated Successfully",
+      // })
     } catch (error) {
       console.log(error)
     } finally {

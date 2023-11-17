@@ -25,7 +25,7 @@ export default async function CollectionPage({
     pageSize,
   })) || { questions: [], totalCount: 0 }
 
-  console.log("debug collection getSavedQuestions: ", result.totalCount)
+  // console.log("debug collection getSavedQuestions: ", result.totalCount)
 
   const totalPages = Math.ceil(result.totalCount / pageSize)
 

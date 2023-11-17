@@ -18,7 +18,7 @@ type Props = {
   filter?: string
 }
 
-const pageSize = 1
+const pageSize = 2
 const AllAnswers = async ({
   questionId,
   userId,

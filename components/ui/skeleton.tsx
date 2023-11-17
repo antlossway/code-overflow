@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import React from "react"
 
 function Skeleton({
   className,
@@ -7,7 +8,7 @@ function Skeleton({
   return (
     <div
       className={cn(
-        "animate-pulse rounded-md bg-state-900/50 dark:bg-slate-50/50 ",
+        "animate-pulse rounded-md bg-slate-300/50 dark:bg-slate-50/50 ",
         className
       )}
       {...props}

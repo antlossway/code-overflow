@@ -1,18 +1,18 @@
 /* eslint-disable camelcase */
-import "./globals.css";
-import "../styles/prism.css";
-import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import { ThemeProvider } from "@/context/ThemeProvider";
-import React from "react";
+import "./globals.css"
+import "../styles/prism.css"
+import type { Metadata } from "next"
+import { Inter, Space_Grotesk } from "next/font/google"
+import { ClerkProvider } from "@clerk/nextjs"
+import { ThemeProvider } from "@/context/ThemeProvider"
+import React from "react"
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-spaceGrotesk",
-});
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+})
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export const metadata: Metadata = {
   title: "Code Overflow",
@@ -20,12 +20,12 @@ export const metadata: Metadata = {
   icons: {
     icon: "/assets/images/site-log.svg",
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en">
@@ -42,5 +42,5 @@ export default function RootLayout({
         </ClerkProvider>
       </body>
     </html>
-  );
+  )
 }
