@@ -1,5 +1,4 @@
 "use server"
-import { FilterQuery } from "mongoose"
 import { connectToDatabase } from "../mongoose"
 import Question from "../database/question.model"
 import { SearchParams } from "./shared.types"

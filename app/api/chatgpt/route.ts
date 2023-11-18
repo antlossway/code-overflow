@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
 
 export const POST = async (request: Request) => {
-  const { question } = await request.json()
+  // const { question } = await request.json()
   console.log("simulate chatgpt api call")
   // simulate a delay of 5 second before returning NextResponse including {reply:"some content"} to client
-  return new Promise((resolve) => {
+  return new Promise<void | Response>((resolve) => {
     setTimeout(() => {
       // console.log("simulate chatgpt api response")
       resolve(NextResponse.json({ reply: "here is a new Answer" }))

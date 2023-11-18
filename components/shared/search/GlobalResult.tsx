@@ -28,7 +28,7 @@ const GlobalResult = () => {
       setResult([])
       setIsLoading(true)
       try {
-        const data = await globalSearch({ query: global, type })
+        const data = (await globalSearch({ query: global, type })) || ""
         setResult(JSON.parse(data))
       } catch (error) {
         console.log(error)

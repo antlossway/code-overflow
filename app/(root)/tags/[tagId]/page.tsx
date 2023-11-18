@@ -3,7 +3,6 @@ import Pagination from "@/components/shared/Pagination"
 import LocalSearch from "@/components/shared/search/LocalSearch"
 import NoResult from "@/components/shared/search/NoResult"
 import { getQuestionsByTagId } from "@/lib/actions/tag.action"
-import { IQuestion } from "@/lib/database/question.model"
 import React from "react"
 
 interface Props {
@@ -48,7 +47,7 @@ const TagDetailPage = async ({ params, searchParams }: Props) => {
       {/* Questions */}
       <div className="mt-11 flex w-full flex-col gap-5 ">
         {result.questions.length > 0 ? (
-          result.questions.map((question: IQuestion) => (
+          result.questions.map((question: any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}

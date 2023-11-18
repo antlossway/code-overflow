@@ -5,12 +5,16 @@ import LocalSearch from "@/components/shared/search/LocalSearch"
 import NoResult from "@/components/shared/search/NoResult"
 import { Button } from "@/components/ui/button"
 import { HomePageFilters } from "@/context/filters"
-import { getQuestions } from "@/lib/actions/question.action"
+import {
+  getQuestions,
+  getRecommendedQuestions,
+} from "@/lib/actions/question.action"
 import Link from "next/link"
 import { SearchParamsProps } from "@/types"
 import Pagination from "@/components/shared/Pagination"
 import Loading from "./loading"
 import { Metadata } from "next"
+import { auth } from "@clerk/nextjs"
 
 export const metadata: Metadata = {
   title: "Home | Code Overflow",
@@ -19,15 +23,34 @@ export const metadata: Metadata = {
 
 const pageSize = 2
 export default async function Home({ searchParams }: SearchParamsProps) {
+  const { userId } = auth()
+
   const page = searchParams?.page ? +searchParams.page : 1
-  const result = (await getQuestions({
-    searchQuery: searchParams.q,
-    filter: searchParams.filter,
-    page, // current page number
-    pageSize,
-  })) || {
-    questions: [],
-    totalCount: 0,
+  let result
+  if (searchParams?.filter === "recommended") {
+    if (userId) {
+      result = await getRecommendedQuestions({
+        userId,
+        searchQuery: searchParams.q,
+        page, // current page number
+        pageSize,
+      })
+    } else {
+      result = {
+        questions: [],
+        totalCount: 0,
+      }
+    }
+  } else {
+    result = (await getQuestions({
+      searchQuery: searchParams.q,
+      filter: searchParams.filter,
+      page, // current page number
+      pageSize,
+    })) || {
+      questions: [],
+      totalCount: 0,
+    }
   }
 
   // below simulate loading states
