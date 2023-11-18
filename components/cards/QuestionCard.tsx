@@ -73,7 +73,7 @@ const QuestionCard = ({
       </div>
 
       {/* author and statistics */}
-      <div className="flex items-center flex-between mt-6 w-full flex-wrap gap-3">
+      <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
           imgUrl={author.picture}
           // imgUrl="/assets/icons/avatar.svg"
@@ -85,32 +85,35 @@ const QuestionCard = ({
           isAuthor={true}
         />
 
-        <Metric
-          imgUrl="/assets/icons/like.svg"
-          alt="upvotes"
-          value={formatBigNumber(upvotes.length)}
-          title=" Votes"
-          textStyles="small-medium text-dark400_light800"
-        />
-        {answers && (
+        {/* statistics go to the right side */}
+        <div className="flex items-center gap-3 max-sm:flex-wrap  ">
           <Metric
-            imgUrl="/assets/icons/message.svg"
-            alt="messages"
-            value={formatBigNumber(answers.length)}
-            title=" Answers"
+            imgUrl="/assets/icons/like.svg"
+            alt="upvotes"
+            value={formatBigNumber(upvotes.length)}
+            title=" Votes"
             textStyles="small-medium text-dark400_light800"
           />
-        )}
+          {answers && (
+            <Metric
+              imgUrl="/assets/icons/message.svg"
+              alt="messages"
+              value={formatBigNumber(answers.length)}
+              title=" Answers"
+              textStyles="small-medium text-dark400_light800"
+            />
+          )}
 
-        {views && (
-          <Metric
-            imgUrl="/assets/icons/eye.svg"
-            alt="eye"
-            value={formatBigNumber(views)}
-            title=" Views"
-            textStyles="small-medium text-dark400_light800"
-          />
-        )}
+          {views && (
+            <Metric
+              imgUrl="/assets/icons/eye.svg"
+              alt="eye"
+              value={formatBigNumber(views)}
+              title=" Views"
+              textStyles="small-medium text-dark400_light800"
+            />
+          )}
+        </div>
       </div>
     </div>
   )

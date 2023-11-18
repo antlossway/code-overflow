@@ -14,6 +14,7 @@ const spaceGrotesk = Space_Grotesk({
 })
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
+// static
 export const metadata: Metadata = {
   title: "Code Overflow",
   description: "A place to ask and answer questions about code.",

@@ -95,7 +95,7 @@ const LocalSearch = ({
           //   onChange={() => {}}
           autoComplete="off"
           // defaultValue={searchParams?.get("q") || ""}
-          className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none text-dark400_light700 placeholder:!text-slate-600"
+          className="paragraph-regular no-focus placeholder bg-transparent border-none shadow-none outline-none text-dark400_light700 placeholder:!text-slate-600"
         />
 
         {iconPostion === "right" && (

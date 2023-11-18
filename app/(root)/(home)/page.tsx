@@ -10,6 +10,12 @@ import Link from "next/link"
 import { SearchParamsProps } from "@/types"
 import Pagination from "@/components/shared/Pagination"
 import Loading from "./loading"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Home | Code Overflow",
+  description: "A place to ask and answer questions about code.",
+}
 
 const pageSize = 2
 export default async function Home({ searchParams }: SearchParamsProps) {
