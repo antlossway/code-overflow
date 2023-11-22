@@ -77,12 +77,17 @@ export const formUrlQuery = ({
 export const formJobUrlQuery = ({ searchParams }: SearchParamsProps) => {
   const q = searchParams.q || "web developer"
   const location = searchParams.location || "Thailand"
+  // get page number, each page has up to 10 jobs
+  const page = searchParams?.page ? +searchParams.page : 1
+  const numPages = searchParams?.num_pages ? +searchParams.num_pages : 2 // 2 pages for testing
   const baseUrl = "https://jsearch.p.rapidapi.com/search"
   const queryString = `${q} ${location ? "in " + location : ""}`
   return qs.stringifyUrl({
     url: baseUrl,
     query: {
       query: queryString,
+      page,
+      num_pages: numPages,
     },
   })
 }

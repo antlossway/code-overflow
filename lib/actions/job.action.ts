@@ -1,8 +1,12 @@
 "use server"
 
-// not in use here, this is to be called from a client component
+import { countries } from "@/constants"
 
-export async function getJobs({ url }: { url: string }) {
+// not in use here, this is to be called from a client component
+interface Props {
+  url: string
+}
+export async function getJobs({ url }: Props) {
   const options = {
     method: "GET",
     headers: {
@@ -24,13 +28,15 @@ export async function getJobs({ url }: { url: string }) {
 }
 
 export async function getCountries() {
-  const url = "https://restcountries.com/v2/all?fields=name,flag,alpha2Code"
-  const options = {
-    method: "GET",
-  }
+  // const url = "https://restcountries.com/v2/all?fields=name,flag,alpha2Code"
+  // const options = {
+  //   method: "GET",
+  // }
   try {
-    const response = await fetch(url, options)
-    const countries = await response.json()
+    // const response = await fetch(url, options)
+    // const countries = await response.json()
+
+    // read countries from filesystem instead of fetching from API
     const countryNameList = countries.map((country: any) => country.name)
     // console.log("debug server action getCountries results: ", countryNameList)
     const countryFlagMap = new Map()

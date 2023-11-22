@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import {
   Select,
   SelectContent,
@@ -22,15 +22,18 @@ type Props = {
 const JobFilter = ({ filters, otherClasses, containerClasses }: Props) => {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [ip, setIP] = useState("")
 
   // get client's IP
   useEffect(() => {
     const getIP = async () => {
-      const clientIP = await fetch("/api/ip")
-      console.log("clientIP: ", clientIP)
+      const res = await fetch("/api/ip")
+      const data = await res.json()
+      // console.log("clientIP: ", data.ip)
+      setIP(data.ip)
     }
     getIP()
-  }, [])
+  }, [ip])
 
   // const [filter, setFilter] = useState(searchParams.get("filter") || "")
   // useEffect(() => {
@@ -60,6 +63,9 @@ const JobFilter = ({ filters, otherClasses, containerClasses }: Props) => {
   return (
     <>
       <div className={`relative ${containerClasses}`}>
+        <span className="text-dark-100 dark:text-light-400">
+          clientIP: {ip}
+        </span>
         <Select
           defaultValue={searchParams.get("filter") || ""}
           onValueChange={handleUpdateFilter}
@@ -79,7 +85,7 @@ const JobFilter = ({ filters, otherClasses, containerClasses }: Props) => {
                 <SelectItem
                   value={filter}
                   key={filter}
-                  className=" cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400"
+                  className=" cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400 max-w-[30ch]"
                 >
                   {filter}
                 </SelectItem>

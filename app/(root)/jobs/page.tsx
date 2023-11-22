@@ -1,6 +1,8 @@
 import JobCard from "@/components/cards/JobCard"
 import JobFilter from "@/components/shared/JobFilter"
+import Pagination from "@/components/shared/Pagination"
 import LocalSearch from "@/components/shared/search/LocalSearch"
+import NoResult from "@/components/shared/search/NoResult"
 import { getCountries, getJobs } from "@/lib/actions/job.action"
 import { formJobUrlQuery } from "@/lib/utils"
 import { SearchParamsProps } from "@/types"
@@ -28,9 +30,9 @@ import React from "react"
 //     url: "https://www.airbnb.com/careers/departments/position/3255855",
 //   },
 // ]
-
 const JobsPage = async ({ searchParams }: SearchParamsProps) => {
-  // detect client's IP
+  const page = searchParams?.page ? +searchParams?.page : 1
+  let totalPages = 2 // the totalPage is a fixed value that need to be passed to JSearch API call
 
   // use restcountries.com API to get list of country name and flag
   const { countryNameList, countryFlagMap } = await getCountries()
@@ -47,6 +49,9 @@ const JobsPage = async ({ searchParams }: SearchParamsProps) => {
 
   const jobs = (await getJobs({ url: getJobsUrl })) || []
   // console.log("debug jobs: ", jobs.length, jobs[0])
+  if (jobs.length === 0) {
+    totalPages = 0
+  }
 
   return (
     <>
@@ -75,27 +80,43 @@ const JobsPage = async ({ searchParams }: SearchParamsProps) => {
 
       {/* job list */}
       <div className="mt-10 flex flex-col gap-4">
-        {jobs.map((job: any) => (
-          <JobCard
-            key={job.job_id}
-            logo={job.employer_logo || "/assets/images/amazon.webp"}
-            title={job.job_title}
-            desc={job.job_description || "No description"}
-            type={job.job_employment_type || "Full Time"}
-            salary={`${
-              job.job_min_salary
-                ? `${job.job_min_salary} - ${job.job_max_salary}`
-                : "Not disclosed"
-            }`}
-            location={
-              job.job_city
-                ? `${job.job_city}, ${job.job_country}`
-                : job.job_country
-            }
-            url={job.job_apply_link}
-            flag={flag}
+        {jobs.length > 0 ? (
+          jobs.map((job: any) => (
+            <JobCard
+              key={job.job_id}
+              logo={job.employer_logo || "/assets/images/amazon.webp"}
+              title={job.job_title}
+              desc={job.job_description || "No description"}
+              type={job.job_employment_type || "Full Time"}
+              salary={`${
+                job.job_min_salary
+                  ? `${job.job_min_salary} - ${job.job_max_salary}`
+                  : "Not disclosed"
+              }`}
+              location={
+                job.job_city
+                  ? `${job.job_city}, ${job.job_country}`
+                  : job.job_country
+              }
+              url={job.job_apply_link}
+              flag={flag}
+            />
+          ))
+        ) : (
+          <NoResult
+            title="No Jobs Found"
+            desc="We couldn't find any jobs matching your search. Try searching with different keywords or filters."
+            link="/jobs"
+            linkTitle="Explore Jobs"
           />
-        ))}
+        )}
+      </div>
+
+      {/* pagination */}
+      <div className="mt-10">
+        {totalPages > 1 && (
+          <Pagination pageNumber={page} isNext={totalPages > page} />
+        )}
       </div>
     </>
   )
