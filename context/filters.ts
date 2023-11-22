@@ -39,3 +39,13 @@ export const GlobalSearchFilters = [
   { name: "User", value: "user" },
   { name: "Tag", value: "tag" },
 ]
+
+// https://restcountries.com/v3.1/name/india
+export const CountryFilters = [
+  { name: "India", value: "india" },
+  { name: "USA", value: "usa" },
+  { name: "UK", value: "uk" },
+  { name: "Australia", value: "australia" },
+  { name: "Canada", value: "canada" },
+  { name: "Others", value: "others" },
+]

@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import qs from "query-string"
 import { BADGE_CRITERIA } from "@/constants"
-import { BadgeCounts } from "@/types"
+import { BadgeCounts, SearchParamsProps } from "@/types"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -55,17 +55,36 @@ interface UrlQueryParams {
   params: string
   key: string
   value: string
+  baseUrl?: string
 }
-export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
+export const formUrlQuery = ({
+  params,
+  key,
+  value,
+  baseUrl,
+}: UrlQueryParams) => {
   const currentQs = qs.parse(params)
   currentQs[key] = value
   return qs.stringifyUrl(
     {
-      url: window.location.pathname,
+      url: baseUrl || window.location.pathname,
       query: currentQs,
     },
     { skipNull: true }
   )
+}
+
+export const formJobUrlQuery = ({ searchParams }: SearchParamsProps) => {
+  const q = searchParams.q || "web developer"
+  const location = searchParams.location || "Thailand"
+  const baseUrl = "https://jsearch.p.rapidapi.com/search"
+  const queryString = `${q} ${location ? "in " + location : ""}`
+  return qs.stringifyUrl({
+    url: baseUrl,
+    query: {
+      query: queryString,
+    },
+  })
 }
 
 interface RemoveKeysFromQueryParams {

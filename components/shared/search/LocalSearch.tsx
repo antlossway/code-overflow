@@ -43,9 +43,9 @@ const LocalSearch = ({
         router.push(newUrl, { scroll: false })
       } else {
         // console.log(pathname, route)
-        if (pathname === route) {
-          // what is the use of this if statement
+        // what is the use of this if statement?
 
+        if (pathname === route) {
           const newUrl = removeKeysFromQuery({
             params: searchParams.toString(),
             keys: ["q"],

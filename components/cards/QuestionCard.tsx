@@ -53,7 +53,7 @@ const QuestionCard = ({
             </h3>
           </Link>
         </div>
-        {/* TODO: if signed in, add edit/delete action */}
+        {/* if signed in, add edit/delete action */}
         <SignedIn>
           {clerkId && clerkId === author.clerkId && (
             // <div className="w-full flex items-center justify-end gap-1">

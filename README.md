@@ -512,6 +512,15 @@ Anyway, hopefully the `max-sm` is straight-forward name.
 
 `line-clamp-3` limit content to show 3 lines, remain represent with "..."
 
+### shadcn/ui select
+
+when I make the Job search page, there is country list filter using shadcn/ui select, but the problem is that I can not scroll through the 250 countries.
+The trick is to use `overflow-y-auto max-h-[20rem]`
+
+```
+ <SelectContent className="text-dark500_light700 small-regular border-none bg-light-900 dark:bg-dark-300 overflow-y-auto max-h-[20rem] ">
+```
+
 ## TinyMCE: library to make rich text editor
 
 ## package query-string
