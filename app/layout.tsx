@@ -17,7 +17,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 // static
 export const metadata: Metadata = {
   title: "Code Overflow",
-  description: "A place to ask and answer questions about code.",
+  description:
+    "This site is for testing: A place to ask and answer questions about code.",
   icons: {
     icon: "/assets/images/site-log.svg",
   },
